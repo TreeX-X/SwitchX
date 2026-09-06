@@ -38,6 +38,7 @@ interface JanusIslandExpandedShellProps extends Pick<JanusIslandProps,
   onToggleParchment: () => void
   onOpenParchmentDetail: () => void
   onOpenAgentResult?: (card: AgentResultCard) => void
+  onOpenQuestionsDetail?: () => void
   onRoundtableStateChange?: (state: RoundtableState | null) => void
   onRequestAuxiliaryClose?: () => void
   mode: 'sleep' | 'order' | 'analytics' | 'running'
@@ -62,6 +63,7 @@ export function JanusIslandExpandedShell({
   workspaceLabel, modeLabel, modeColor, statusText, maintenanceTask,
   onOpenMaintenance, onCancelMaintenance, onOpenBlueprintWorkbench,
   onOpenAgentResult,
+  onOpenQuestionsDetail,
   onRoundtableStateChange,
   onRequestAuxiliaryClose,
   officeArtifacts, onOpenOfficeArtifact, messages, pendingContent,
@@ -367,15 +369,19 @@ export function JanusIslandExpandedShell({
                     onToggleParchment={onToggleParchment}
                     onOpenParchmentDetail={onOpenParchmentDetail}
                     onOpenAgentResult={onOpenAgentResult}
+                    onOpenQuestions={onOpenQuestionsDetail}
                     onStateChange={onRoundtableStateChange}
                     onRequestAuxiliaryClose={onRequestAuxiliaryClose}
-                    center={(onRoundtableSend, roundtableMessages, workingRole, cards) => <>
+                    center={(onRoundtableSend, roundtableMessages, workingRole, cards, hostQuestions, inputPlaceholder) => <>
                       <JanusChat
                         visible={stage === 'expanded' && view === 'roundtable'}
                         docked discussionOnly focused={!focusedTabId?.startsWith('janus-chat')}
                         modeColor={modeColor} messages={roundtableMessages} pendingContent="" isStreaming={false} error={null}
                         modelOptions={modelOptions} activeModel={activeModel} modelNotice={null}
                         roundtableCards={cards}
+                        roundtableQuestions={hostQuestions}
+                        inputPlaceholderOverride={inputPlaceholder}
+                        onOpenQuestions={onOpenQuestionsDetail}
                         onOpenAgentResult={onOpenAgentResult}
                         onSelectModel={onChatSelectModel} onSend={onRoundtableSend} onRewrite={onChatRewrite}
                         onStop={() => undefined} onRetry={onChatRetry} onClear={onChatClear} resourceController={resourceController}

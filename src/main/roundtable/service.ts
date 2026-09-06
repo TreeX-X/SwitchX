@@ -36,7 +36,7 @@ export class RoundtableService {
     // process ever serves roundtables again, this line's absence gives it away.
     console.info('[roundtable] runtime created (fail-loud + workspaceId normalization active)')
     const agents = Object.fromEntries(defaultRoundtableWorkflow.participants.flatMap((spec) => spec.instances).map((participant) => [participant.id, {
-      run: async ({ userInput, priorCards, priorFacts, workspaceResources, workspaceContext, workspaceTools }: { userInput?: string; priorCards: any[]; priorFacts?: any[]; workspaceResources?: RoundtableWorkspaceResource[]; workspaceContext?: string; workspaceTools?: { execute(name: 'workspace.list' | 'workspace.read' | 'workspace.readRange', input: Record<string, unknown>): Promise<unknown> } }) => {
+      run: async ({ userInput, priorCards, priorFacts, workspaceResources, workspaceContext, hostMode, workspaceTools }: { userInput?: string; priorCards: any[]; priorFacts?: any[]; workspaceResources?: RoundtableWorkspaceResource[]; workspaceContext?: string; hostMode?: 'intake' | 'merge' | 'synthesis'; workspaceTools?: { execute(name: 'workspace.list' | 'workspace.read' | 'workspace.readRange', input: Record<string, unknown>): Promise<unknown> } }) => {
         // Fail loudly: a silent one-line fallback here used to masquerade as a
         // completed card ("refiner reviewed ... with 0 prior results"), leaving
         // users with empty proposals and no diagnosable error. Errors propagate
@@ -51,10 +51,14 @@ export class RoundtableService {
           throw new Error(`圆桌 Agent 模型创建失败 (${target.provider.id}/${target.modelId})：${error instanceof Error ? error.message : String(error)}`)
         }
           const roleInstruction = participant.role === 'refiner'
-            ? 'Propose a concrete improvement and implementation path.'
+            ? 'Propose a concrete improvement and implementation path. Read the shared pool first and treat the tracked user requirement as the base. Reference pool ids (e.g. [pool-req-...]) when building on them. Output deltas only: limited new points plus implementation details plus boundary cases; never restate pool content. Put member questions under a trailing "Questions:" section, one per line.'
             : participant.role === 'challenger'
-              ? 'Identify gaps, risks, and assumptions that need validation.'
-              : 'Synthesize the discussion into a concise host summary. Start with a one-sentence conclusion, then list open points.'
+              ? 'Identify gaps, risks, and assumptions that need validation. Read the shared pool plus this round refiner increment first. Output the Top risks with fixes or counter-questions; do not open competing proposals. Put questions under a trailing "Questions:" section, one per line.'
+              : hostMode === 'intake'
+                ? 'Acknowledge the new user requirement in one short paragraph: restate the demand as the tracked requirement and note what the pool will build on. Do not propose solutions yet. If the user supplement answers any open pool question, list each answered question under an "Answered:" section, quoting its text exactly.'
+                : hostMode === 'merge'
+                  ? 'Merge this round refiner increment into a short summary: start with the merged takeaway in one sentence, then list deduplicated points and open questions. Write deltas only, do not restate the shared pool.'
+                  : 'Synthesize the discussion into a concise host summary. Start with a one-sentence conclusion, then list open points.'
           // Tool budget: vague inputs make models burn every step on tool
           // calls and never write prose, which used to surface as an empty
           // result failure. Cap exploration so text always gets written.
@@ -106,9 +110,12 @@ export class RoundtableService {
             workspace_read: { description: 'Read a bounded UTF-8 file from an attached workspace and return its content and SHA-256.', parameters: z.object({ workspaceId, path: z.string().min(1), maxBytes: z.number().int().min(1).max(256 * 1024).default(128 * 1024) }), execute: bindWorkspaceTool(toolExecutor, 'workspace.read') },
             workspace_read_range: { description: 'Read a bounded byte range from a UTF-8 file in an attached workspace and return its content and SHA-256.', parameters: z.object({ workspaceId, path: z.string().min(1), offset: z.number().int().min(0), maxBytes: z.number().int().min(1).max(256 * 1024).default(64 * 1024) }), execute: bindWorkspaceTool(toolExecutor, 'workspace.readRange') },
           } : undefined
+          const poolBlock = (priorFacts ?? []).slice(-30).map((fact) =>
+            `[${fact.id} | ${fact.kind} | ${fact.status}] ${fact.title}: ${String(fact.content ?? '').slice(0, 200)}`,
+          ).join('\n') || 'Pool is empty.'
           const promptMessages = [
             { role: 'system', content: `You are the ${participant.role} in a structured roundtable. ${roleInstruction} You may call workspace tools at most 2-3 times for file evidence; afterwards you MUST write your findings as markdown text in the same response. Never end your turn with only tool calls and no prose.` },
-            { role: 'user', content: `Topic: ${userInput ?? 'Continue from shared state'}\nWorkspace resources (read-only; copy workspaceId EXACTLY when calling tools):\n${(workspaceResources ?? []).map((resource) => `- id: ${resource.workspaceId} name: ${resource.workspaceName} path: ${resource.workspacePath}`).join('\n') || 'None attached'}\nWorkspace evidence:\n${workspaceContext || 'No readable workspace evidence attached.'}\nShared facts:\n${(priorFacts ?? []).map((fact) => `[${fact.status}] ${fact.title}: ${fact.content}`).join('\n')}\nPrior results:\n${priorCards.map((card) => card.summary ?? '').join('\n')}` },
+            { role: 'user', content: `Topic: ${userInput ?? 'Continue from shared state'}\nWorkspace resources (read-only; copy workspaceId EXACTLY when calling tools):\n${(workspaceResources ?? []).map((resource) => `- id: ${resource.workspaceId} name: ${resource.workspaceName} path: ${resource.workspacePath}`).join('\n') || 'None attached'}\nWorkspace evidence:\n${workspaceContext || 'No readable workspace evidence attached.'}\nShared pool (authoritative; cite ids, write deltas only):\n${poolBlock}\nPrior results:\n${priorCards.map((card) => card.summary ?? '').join('\n')}` },
           ]
           const result = await generateText({ model: model as any, maxSteps: 6, tools, messages: promptMessages as any }).catch((error) => {
             throw new Error(`圆桌 Agent 模型调用失败 (${participant.id}, ${target.provider.id}/${target.modelId})：${error instanceof Error ? error.message : String(error)}`)

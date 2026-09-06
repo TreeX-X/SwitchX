@@ -16,6 +16,7 @@ import {
   type JanusAuxiliaryModuleType,
 } from './JanusAuxiliaryIsland'
 import { JanusRoundtableParchment } from './JanusRoundtableParchment'
+import { JanusRoundtableQuestions } from './JanusRoundtableQuestions'
 import { buildRoundtableFilename, copyTextToClipboard, fetchRoundtableMarkdown, saveMarkdownViaDialog, withDraftWatermark } from './roundtableExport'
 import type { AgentWorkState } from '../../../../shared/roundtable/events'
 
@@ -127,7 +128,7 @@ export function JanusIsland({
   useEffect(() => {
     if (roundtableState) return
     setActiveAgentCard(null)
-    setAuxiliaryModule((module) => (module === 'agent-result' || module === 'roundtable-parchment' ? null : module))
+    setAuxiliaryModule((module) => (module === 'agent-result' || module === 'roundtable-parchment' || module === 'roundtable-questions' ? null : module))
     setParchmentOpen(false)
   }, [roundtableState])
   const maintenanceTasks = useBlueprintMaintenanceStore((state) => state.tasks)
@@ -362,7 +363,17 @@ export function JanusIsland({
         title: t('janus:roundtable.auxiliary.parchmentTitle'),
         ariaLabel: t('janus:roundtable.auxiliary.parchmentAria'),
       }
-    : auxiliaryModule === 'agent-result' ? { id: 'janus-agent-result-detail', type: 'agent-result', title: t('janus:roundtable.auxiliary.agentResultTitle'), ariaLabel: t('janus:roundtable.auxiliary.agentResultAria') } : null
+    : auxiliaryModule === 'agent-result' ? { id: 'janus-agent-result-detail', type: 'agent-result', title: t('janus:roundtable.auxiliary.agentResultTitle'), ariaLabel: t('janus:roundtable.auxiliary.agentResultAria') }
+    : auxiliaryModule === 'roundtable-questions' ? { id: 'janus-roundtable-questions-detail', type: 'roundtable-questions', title: t('janus:roundtable.auxiliary.questionsTitle'), ariaLabel: t('janus:roundtable.auxiliary.questionsAria') } : null
+
+  // §37.10: question pool projection shared by the questions detail island.
+  const roundtableOpenQuestions = (roundtableState?.facts ?? [])
+    .filter((fact) => fact.kind === 'question' && fact.status !== 'resolved' && fact.status !== 'rejected')
+    .map((fact) => ({ id: fact.id, text: fact.content, updatedAt: fact.updatedAt }))
+  const roundtableAnsweredQuestions = (roundtableState?.facts ?? [])
+    .filter((fact) => fact.kind === 'question' && fact.status === 'resolved')
+    .slice(-10)
+    .map((fact) => ({ id: fact.id, text: fact.content, updatedAt: fact.updatedAt }))
 
   useEffect(() => {
     document.body.classList.toggle('is-running', janusRunning)
@@ -454,6 +465,7 @@ export function JanusIsland({
             setAuxiliaryModule('roundtable-parchment')
           }}
           onOpenAgentResult={(card) => { setActiveAgentCard(card); setAuxiliaryModule('agent-result'); setAuxiliaryClosing(false) }}
+          onOpenQuestionsDetail={() => { setAuxiliaryClosing(false); setAuxiliaryModule('roundtable-questions') }}
           onRequestAuxiliaryClose={requestCloseAuxiliary}
           onRoundtableStateChange={setRoundtableState}
           mode={mode}
@@ -519,7 +531,7 @@ export function JanusIsland({
             </>
           ) : undefined}
         >
-          {auxiliaryModule === 'roundtable-parchment' ? <JanusRoundtableParchment detailed document={roundtableState ? projectParchment(roundtableState) : undefined} /> : <div key={activeAgentCard?.id ?? 'agent-result-empty'} className="janus-agent-result-detail" data-detailed="true">
+          {auxiliaryModule === 'roundtable-parchment' ? <JanusRoundtableParchment detailed document={roundtableState ? projectParchment(roundtableState) : undefined} /> : auxiliaryModule === 'roundtable-questions' ? <JanusRoundtableQuestions roundNumber={roundtableState?.roundNumber ?? 0} open={roundtableOpenQuestions} answered={roundtableAnsweredQuestions} /> : <div key={activeAgentCard?.id ?? 'agent-result-empty'} className="janus-agent-result-detail" data-detailed="true">
             <div className="janus-agent-result-detail__eyebrow">{t('janus:roundtable.cardDetail.eyebrow')} // {activeAgentCard?.status ? t(ROUNDTABLE_CARD_STATUS_KEYS[activeAgentCard.status]) : t('janus:roundtable.cardDetail.waiting')}</div>
             <h2>{activeAgentCard?.title ?? t('janus:roundtable.cardDetail.titleFallback')}</h2>
             <p className="janus-agent-result-detail__summary">{activeAgentCard?.summary ?? t('janus:roundtable.cardDetail.summaryFallback')}</p>

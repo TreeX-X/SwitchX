@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { PanelRightClose } from 'lucide-react'
 
-export type JanusAuxiliaryModuleType = 'roundtable-parchment' | 'agent-result' | 'knowledge-detail' | 'runtime-detail' | 'office-preview'
+export type JanusAuxiliaryModuleType = 'roundtable-parchment' | 'agent-result' | 'roundtable-questions' | 'knowledge-detail' | 'runtime-detail' | 'office-preview'
 export interface JanusAuxiliaryModuleDescriptor { id: string; type: JanusAuxiliaryModuleType; title: string; ariaLabel: string }
 interface JanusAuxiliaryIslandProps { module: JanusAuxiliaryModuleDescriptor; closing?: boolean; onClose: () => void; children: ReactNode; actions?: ReactNode }
 

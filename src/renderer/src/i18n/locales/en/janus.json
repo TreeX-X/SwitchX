@@ -336,7 +336,9 @@
       "agentResultAria": "Agent result details",
       "agentResultTitle": "Agent Result",
       "parchmentAria": "Shared parchment details",
-      "parchmentTitle": "Shared Parchment"
+      "parchmentTitle": "Shared Parchment",
+      "questionsAria": "Member questions detail",
+      "questionsTitle": "Questions"
     },
     "cardDetail": {
       "evidence": "Evidence",
@@ -356,6 +358,15 @@
       "updated": "Updated {{time}}",
       "waiting": "WAITING",
       "workspaceReads": "Workspace reads"
+    },
+    "questions": {
+      "answered": "Answered",
+      "answeredEmpty": "No answered questions yet.",
+      "empty": "No open questions.",
+      "eyebrow": "MEMBER QUESTIONS",
+      "open": "Open",
+      "updated": "Updated {{time}}",
+      "viewDetail": "View detail"
     },
     "export": {
       "actionAria": "Export parchment Markdown",

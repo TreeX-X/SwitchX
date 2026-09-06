@@ -33,7 +33,7 @@ export type RoundtableFactStatus = 'confirmed' | 'proposal' | 'concern' | 'pendi
 
 export interface RoundtableFact {
   id: string
-  kind: 'decision' | 'evidence' | 'risk' | 'action' | 'question'
+  kind: 'decision' | 'evidence' | 'risk' | 'action' | 'question' | 'requirement' | 'solution'
   status: RoundtableFactStatus
   title: string
   content: string
@@ -85,8 +85,37 @@ export interface HostSynthesis {
   conflicts: HostSynthesisConflict[]
   risks: string[]
   actions: string[]
+  /** §37.8: open/answered questions derived from question-kind facts. */
+  questions: RoundtableQuestion[]
   sourceEventIds: string[]
   createdAt: string
+}
+
+/**
+ * §37.6/§37.8: a member question collected by the host into the pool.
+ * `fromAgentId` is empty when the origin cannot be attributed (e.g. facts
+ * recorded before per-agent attribution existed); renderers fall back to a
+ * generic member label in that case.
+ */
+export interface RoundtableQuestion {
+  id: string
+  text: string
+  fromAgentId: string
+  roundNumber: number
+  status: 'open' | 'answered'
+  factId?: string
+  sourceEventIds: string[]
+}
+
+/**
+ * §37.3: host-only pool write. Agents propose deltas; only ops carried by
+ * `host:pool-update` mutate the shared pool (add new entries, update content,
+ * or transition status). `opId` + envelope `eventId` dedup make retries safe.
+ */
+export interface RoundtablePoolUpdateOp {
+  opId: string
+  action: 'add' | 'update' | 'set-status'
+  fact: RoundtableFact
 }
 
 export interface RoundtableUserMessage {
@@ -133,12 +162,13 @@ export type RoundtableEvent =
   | ({ type: 'agent:error'; sessionId: string; roundId: string; agentId: string; role: WorkflowRole; error: string })
   | ({ type: 'round:awaiting-user'; sessionId: string; roundId: string; roundNumber: number })
   | ({ type: 'host:synthesis'; sessionId: string; roundId: string; synthesis: HostSynthesis })
+  | ({ type: 'host:pool-update'; sessionId: string; roundId: string; ops: RoundtablePoolUpdateOp[] })
   | ({ type: 'session:ended'; sessionId: string })
 
 export type RoundtableEventEnvelope = RoundtableEvent & { eventId: string; occurredAt: string }
 
 export interface FixtureAgent {
-  run(input: { sessionId: string; roundId: string; roundNumber: number; userInput?: string; priorCards: AgentResultCard[]; priorFacts?: RoundtableFact[]; workspaceResources?: RoundtableWorkspaceResource[]; workspaceContext?: string; workspaceTools?: RoundtableWorkspaceToolExecutor }): Promise<string>
+  run(input: { sessionId: string; roundId: string; roundNumber: number; userInput?: string; priorCards: AgentResultCard[]; priorFacts?: RoundtableFact[]; workspaceResources?: RoundtableWorkspaceResource[]; workspaceContext?: string; stageId: string; hostMode?: 'intake' | 'merge' | 'synthesis'; workspaceTools?: RoundtableWorkspaceToolExecutor }): Promise<string>
 }
 
 export interface RoundtableWorkspaceToolExecutor {

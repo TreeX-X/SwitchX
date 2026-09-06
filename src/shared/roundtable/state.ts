@@ -28,7 +28,7 @@ export function migrateRoundtableState(raw: unknown): RoundtableState {
     workspaceContext: value.workspaceContext ?? '',
     workspaceContextFiles: [...(value.workspaceContextFiles ?? [])],
     workspaceEvidenceRefs: [...(value.workspaceEvidenceRefs ?? [])],
-    hostDrafts: [...(value.hostDrafts ?? [])],
+    hostDrafts: [...(value.hostDrafts ?? []).map((draft) => ({ ...draft, questions: [...(draft.questions ?? [])] }))],
     userMessages: [...(value.userMessages ?? [])],
     advanceKeys: value.advanceKeys ? { ...value.advanceKeys } : undefined,
   }
@@ -82,6 +82,23 @@ export function reduceRoundtableEvent(state: RoundtableState, event: RoundtableE
       if (index >= 0) drafts[index] = event.synthesis
       else drafts.push(event.synthesis)
       return { ...next, hostDrafts: drafts }
+    }
+    case 'host:pool-update': {
+      // Host-only pool write (§37.3). Envelope eventId dedup above already
+      // makes exact retries a no-op; ops with unknown ids (except add) are
+      // ignored rather than fabricated.
+      const facts = [...next.facts]
+      for (const op of event.ops) {
+        const index = facts.findIndex((fact) => fact.id === op.fact.id)
+        if (op.action === 'add') {
+          if (index < 0) facts.push(op.fact)
+        } else if (index >= 0) {
+          facts[index] = op.action === 'set-status'
+            ? { ...facts[index], status: op.fact.status, updatedAt: op.fact.updatedAt, sourceEventIds: [...new Set([...facts[index].sourceEventIds, ...op.fact.sourceEventIds])] }
+            : { ...op.fact }
+        }
+      }
+      return { ...next, facts }
     }
     case 'session:ended': return { ...next, phase: 'ended', sessionId: event.sessionId }
     default: return next

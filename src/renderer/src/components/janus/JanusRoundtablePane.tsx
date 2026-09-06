@@ -6,6 +6,7 @@ import type { AgentResultCard } from '../../../../shared/roundtable/events'
 import type { RoundtableState } from '../../../../shared/roundtable/events'
 import { EMPTY_AGENT_WORK_PROJECTION, reconcilePendingUserMessages, reduceAgentWorkEvent, type AgentWorkProjection, type PendingUserInput } from './agentWorkProjection'
 import { AgentResultCard as AgentResultCardView } from './AgentResultCard'
+import type { RoundtableHostQuestionBlock } from './JanusChat'
 import { buildRoundtableFilename, fetchRoundtableMarkdown, saveMarkdownViaDialog } from './roundtableExport'
 
 const ROUNDTABLE_SESSION_KEY = 'janusx.roundtable.sessionId'
@@ -19,10 +20,11 @@ interface JanusRoundtablePaneProps {
   parchmentDetailOpen: boolean
   onToggleParchment: () => void
   onOpenParchmentDetail: () => void
-  center?: (onSend: (text: string) => void, messages: Message[], workingRole: RoundtableRole | null, cards: AgentResultCard[]) => ReactNode
+  center?: (onSend: (text: string) => void, messages: Message[], workingRole: RoundtableRole | null, cards: AgentResultCard[], hostQuestions?: RoundtableHostQuestionBlock[], inputPlaceholder?: string) => ReactNode
   workingAgents?: string[]
   resultCards?: AgentResultCard[]
   onOpenAgentResult?: (card: AgentResultCard) => void
+  onOpenQuestions?: () => void
   onStateChange?: (state: RoundtableState | null) => void
   /** Animated auxiliary close owned by the Island (same rhythm as Collapse). */
   onRequestAuxiliaryClose?: () => void
@@ -66,6 +68,7 @@ export function JanusRoundtablePane({
   workingAgents = [],
   resultCards = [],
   onOpenAgentResult,
+  onOpenQuestions,
   onStateChange,
   onRequestAuxiliaryClose,
 }: JanusRoundtablePaneProps) {
@@ -332,6 +335,22 @@ export function JanusRoundtablePane({
   }), [liveAgentKey, workingKey, roundtableState?.roundNumber, roundtableState?.sessionId])
   const deckCards = [...liveAgentCards, ...work.cards]
   const workingRole = toWorkingRole(liveAgentIds[0])
+  // §37.8: open member questions surface without opening any card. Resolved
+  // and rejected entries leave the list; the banner pins above the composer
+  // while the bubble below joins the discussion stream.
+  const openQuestions = (roundtableState?.facts ?? []).filter((fact) => fact.kind === 'question' && fact.status !== 'resolved' && fact.status !== 'rejected')
+  const answeredCount = (roundtableState?.facts ?? []).filter((fact) => fact.kind === 'question' && fact.status === 'resolved').length
+  const showQuestions = !!roundtableState && (roundtableState.phase === 'awaiting-user' || roundtableState.phase === 'running') && openQuestions.length > 0
+  const questionBlocks: RoundtableHostQuestionBlock[] = showQuestions && roundtableState
+    ? [{
+        roundNumber: roundtableState.roundNumber,
+        questions: openQuestions.map((fact) => ({ id: fact.id, text: fact.content })),
+        answeredCount,
+        timestamp: Math.max(...openQuestions.map((fact) => Date.parse(fact.updatedAt) || 0)),
+      }]
+    : []
+  const showQuestionsBanner = roundtableState?.phase === 'awaiting-user' && openQuestions.length > 0
+  const questionsPlaceholder = showQuestionsBanner ? '回答 Q1… 或补充想法开启下一轮' : undefined
 
   const stopPointerPropagation = (event: ReactPointerEvent) => event.stopPropagation()
 
@@ -394,7 +413,14 @@ export function JanusRoundtablePane({
                 ))}
               </div>
             ) : null}
-            {center?.(handleCenterSend, roundtableMessages, workingRole, deckCards)}
+            {showQuestionsBanner ? (
+              <div className="janus-roundtable-questions-banner" role="status" aria-label="待回答问题">
+                <span className="janus-roundtable-questions-banner__text">待回答 {openQuestions.length} · {openQuestions.slice(0, 2).map((fact, index) => `Q${index + 1}${fact.content.slice(0, 24)}`).join('；')}{openQuestions.length > 2 ? '…' : ''}</span>
+                <span className="janus-roundtable-questions-banner__hint">在下方直接回答，或点「开启下一轮」跳过</span>
+                {onOpenQuestions ? <button type="button" className="janus-roundtable-questions-banner__detail" onClick={onOpenQuestions}>查看详情</button> : null}
+              </div>
+            ) : null}
+            {center?.(handleCenterSend, roundtableMessages, workingRole, deckCards, questionBlocks, questionsPlaceholder)}
           </main>
           <aside className="janus-roundtable-state">
             <div className="janus-roundtable-agent-deck" aria-label="Agent 工作卡片">

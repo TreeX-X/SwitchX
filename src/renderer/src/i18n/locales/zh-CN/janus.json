@@ -336,7 +336,9 @@
       "agentResultAria": "Agent 结果详情",
       "agentResultTitle": "Agent 结果",
       "parchmentAria": "共享羊皮纸详细内容",
-      "parchmentTitle": "共享羊皮纸"
+      "parchmentTitle": "共享羊皮纸",
+      "questionsAria": "成员提问详细内容",
+      "questionsTitle": "提问详情"
     },
     "cardDetail": {
       "evidence": "证据",
@@ -356,6 +358,15 @@
       "updated": "更新于 {{time}}",
       "waiting": "等待中",
       "workspaceReads": "工作区读取"
+    },
+    "questions": {
+      "answered": "已解决",
+      "answeredEmpty": "暂无已解决问题。",
+      "empty": "暂无待回答问题。",
+      "eyebrow": "成员提问",
+      "open": "待回答",
+      "updated": "更新于 {{time}}",
+      "viewDetail": "查看详情"
     },
     "export": {
       "actionAria": "导出羊皮纸 Markdown",

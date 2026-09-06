@@ -2496,6 +2496,44 @@
 .janus-roundtable-ended-banner__actions .janus-roundtable-end { position: static; margin: 0; padding: 5px 9px; }
 .janus-roundtable-ended-banner__actions button:disabled { opacity: .45; cursor: not-allowed; }
 .janus-roundtable-ended-banner__notice { flex-basis: 100%; color: rgba(216,195,158,.72); font: 10px ui-monospace, monospace; }
+/* §37.8 open-questions banner: mirrors the ended banner chrome, amber accent. */
+.janus-roundtable-questions-banner {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(216,195,158,.14);
+  background: rgba(30,23,15,.96);
+}
+.janus-roundtable-questions-banner__text { color: #f0c979; font: 600 11px Georgia, serif; letter-spacing: .04em; }
+.janus-roundtable-questions-banner__hint { color: rgba(216,195,158,.62); font: 10px ui-monospace, monospace; }
+.janus-roundtable-questions-banner__detail {
+  margin-left: auto;
+  padding: 3px 9px;
+  color: #f0c979;
+  background: transparent;
+  border: 1px solid rgba(240,201,121,.4);
+  border-radius: 4px;
+  font: 10px ui-monospace, monospace;
+  cursor: pointer;
+}
+.janus-roundtable-questions-banner__detail:hover { border-color: rgba(240,201,121,.8); }
+/* §37.8 host question bubble: assistant message with numbered questions. */
+.janus-chat-host-questions p { margin: 2px 0; }
+.janus-chat-host-questions-hint { color: rgba(216,195,158,.62); font-size: 11px; }
+.janus-chat-host-questions-detail {
+  margin-top: 4px;
+  padding: 3px 9px;
+  color: #f0c979;
+  background: transparent;
+  border: 1px solid rgba(240,201,121,.4);
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.janus-chat-host-questions-detail:hover { border-color: rgba(240,201,121,.8); }
 /* Staged new-topic exit: the dialog fades while the auxiliary Island plays
    its own 240ms exit; state resets only after both finished. */
 .janus-roundtable-center { transition: opacity .22s ease, transform .22s ease; }

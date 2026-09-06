@@ -2,8 +2,8 @@ import { realpath, stat } from 'node:fs/promises'
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph'
 import type { AgentResultCard, FixtureAgent, RoundtableEvent, RoundtableEventEnvelope, RoundtableFact, RoundtableState, RoundtableWorkspaceResource, RoundtableEvidenceRef } from '../../shared/roundtable/events'
 import { EMPTY_ROUNDTABLE_STATE, reduceRoundtableEvent } from '../../shared/roundtable/state'
-import { synthesizeHostDraft } from '../../shared/roundtable/host-synthesis'
-import { defaultRoundtableWorkflow, participantsForRole, validateWorkflowTemplate, type ParticipantInstance, type WorkflowTemplate } from '../../shared/roundtable/workflow-template'
+import { synthesizeHostDraft, harvestQuestionTexts, harvestAnsweredTexts } from '../../shared/roundtable/host-synthesis'
+import { defaultRoundtableWorkflow, participantsForRole, validateWorkflowTemplate, type ParticipantInstance, type WorkflowStage, type WorkflowTemplate } from '../../shared/roundtable/workflow-template'
 import { AgentRegistry } from './agent-registry'
 import { janusWorkspaceFs } from '../agent/environment/janus-workspace-fs'
 import { executeRoundtableWorkspaceTool } from './workspace-tools'
@@ -74,14 +74,14 @@ export class RoundtableRuntime {
   /** Abort pending workspace tool calls. In-flight tools observe cancellation
    * and emit workspace:tool-cancelled instead of hanging. */
   cancel(): void { this.controller.abort() }
-  getState(): RoundtableState { return { ...this.state, participants: [...this.state.participants], cards: [...this.state.cards], errors: [...this.state.errors], facts: [...this.state.facts], eventIds: [...this.state.eventIds], workspaceResources: [...this.state.workspaceResources], workspaceContextFiles: [...(this.state.workspaceContextFiles ?? [])], workspaceEvidenceRefs: [...(this.state.workspaceEvidenceRefs ?? [])], hostDrafts: [...(this.state.hostDrafts ?? [])], userMessages: [...this.state.userMessages], advanceKeys: this.state.advanceKeys ? { ...this.state.advanceKeys } : undefined } }
+  getState(): RoundtableState { return { ...this.state, participants: [...this.state.participants], cards: [...this.state.cards], errors: [...this.state.errors], facts: [...this.state.facts], eventIds: [...this.state.eventIds], workspaceResources: [...this.state.workspaceResources], workspaceContextFiles: [...(this.state.workspaceContextFiles ?? [])], workspaceEvidenceRefs: [...(this.state.workspaceEvidenceRefs ?? [])], hostDrafts: (this.state.hostDrafts ?? []).map((draft) => ({ ...draft, questions: [...(draft.questions ?? [])] })), userMessages: [...this.state.userMessages], advanceKeys: this.state.advanceKeys ? { ...this.state.advanceKeys } : undefined } }
   hydrate(state: RoundtableState): void {
     this.state = {
       ...state,
       participants: [...(state.participants ?? [])], cards: [...(state.cards ?? [])], errors: [...(state.errors ?? [])],
       facts: [...(state.facts ?? [])], eventIds: [...(state.eventIds ?? [])], workspaceResources: [...(state.workspaceResources ?? [])],
       workspaceContextFiles: [...(state.workspaceContextFiles ?? [])], workspaceContext: state.workspaceContext ?? '',
-      workspaceEvidenceRefs: [...(state.workspaceEvidenceRefs ?? [])], hostDrafts: [...(state.hostDrafts ?? [])],
+      workspaceEvidenceRefs: [...(state.workspaceEvidenceRefs ?? [])], hostDrafts: [...(state.hostDrafts ?? []).map((draft) => ({ ...draft, questions: [...(draft.questions ?? [])] }))],
       userMessages: [...(state.userMessages ?? [])], advanceKeys: state.advanceKeys ? { ...state.advanceKeys } : undefined,
     }
   }
@@ -220,7 +220,7 @@ export class RoundtableRuntime {
     for (const stage of this.template.stages) {
       const participants = participantsForRole(this.template, stage.role)
       const stageState = { ...state, cards: state.cards.concat(cards), errors: state.errors.concat(errors) }
-      const results = await Promise.all(participants.map((participant) => this.runAgent(stageState, participant, roundId)))
+      const results = await Promise.all(participants.map((participant) => this.runAgent(stageState, participant, roundId, stage, cards)))
       for (const result of results) {
         cards.push(...(result.cards ?? []))
         errors.push(...(result.errors ?? []))
@@ -229,12 +229,87 @@ export class RoundtableRuntime {
     return { cards, errors }
   }
 
-  private async runAgent(state: GraphState, participant: ParticipantInstance, roundId: string) {
+  private async runAgent(state: GraphState, participant: ParticipantInstance, roundId: string, stage: WorkflowStage, roundCards: AgentResultCard[]) {
     const { sessionId } = state
+    // §37: hostMode defaults to synthesis so templates without the field keep
+    // the legacy single-host behavior byte for byte.
+    const hostMode = participant.role === 'host' ? (stage.hostMode ?? 'synthesis') : undefined
+    // §37.3: an intake with no fresh user text leaves the pool untouched —
+    // skip silently instead of emitting phantom host activity.
+    if (hostMode === 'intake' && !state.userInput) return {}
     this.emit({ type: 'agent:queued', sessionId, roundId, agentId: participant.id, role: participant.role })
     this.emit({ type: 'agent:working', sessionId, roundId, agentId: participant.id, role: participant.role })
+    // §37.3: user demand enters the pool deterministically ahead of any model
+    // call, so the requirement survives even a host model failure.
+    if (hostMode === 'intake' && state.userInput) {
+      this.emit({
+        type: 'host:pool-update', sessionId, roundId,
+        ops: [{
+          opId: `intake-${roundId}`, action: 'add',
+          fact: {
+            id: `pool-req-${roundId}`, kind: 'requirement', status: 'proposal',
+            title: '用户需求', content: state.userInput,
+            sourceEventIds: [], updatedAt: new Date().toISOString(),
+          },
+        }],
+      })
+    }
+    // §37.6 deterministic merge (P0-3): harvest member questions from this
+    // round's refiner (merge) / challenger (synthesis) prose ahead of the
+    // model call, so questions reach the pool even when the host model fails.
+    // Re-asked questions are skipped by normalized comparison with the pool.
+    if ((hostMode === 'merge' || hostMode === 'synthesis') && roundCards.length) {
+      const wantedRole = hostMode === 'merge' ? 'refiner' : 'challenger'
+      const known = new Set(this.state.facts.filter((fact) => fact.kind === 'question').map((fact) => fact.content.trim().toLowerCase().replace(/\s+/g, ' ')))
+      const fresh = harvestQuestionTexts(roundCards.filter((card) => card.role === wantedRole))
+        .filter((text) => !known.has(text.trim().toLowerCase().replace(/\s+/g, ' ')))
+      if (fresh.length) {
+        const now = new Date().toISOString()
+        this.emit({
+          type: 'host:pool-update', sessionId, roundId,
+          ops: fresh.map((text, index) => ({
+            opId: `harvest-${roundId}-${hostMode}-${index}`, action: 'add' as const,
+            fact: {
+              id: `pool-q-${roundId}-${hostMode}-${index}`, kind: 'question' as const,
+              status: 'pending-validation' as const, title: '成员提问', content: text,
+              sourceEventIds: [], updatedAt: now,
+            },
+          })),
+        })
+      }
+    }
+    // P1a answer resolution: the intake host quotes settled questions under an
+    // `Answered:` section. Each line must normalize-match an OPEN pool
+    // question; unmatched lines are ignored so hallucinations resolve nothing.
+    // Ops stay idempotent: re-emitting set-status on an already-resolved fact
+    // only merges source ids.
+    if ((hostMode === 'merge' || hostMode === 'synthesis') && roundCards.length) {
+      const norm = (text: string): string => text.trim().toLowerCase().replace(/\s+/g, ' ')
+      const openByNorm = new Map(this.state.facts
+        .filter((fact) => fact.kind === 'question' && fact.status !== 'resolved' && fact.status !== 'rejected')
+        .map((fact) => [norm(fact.content), fact]))
+      const seenResolve = new Set<string>()
+      const matched = harvestAnsweredTexts(roundCards.filter((card) => card.role === 'host'))
+        .map((text) => openByNorm.get(norm(text)))
+        .filter((fact): fact is RoundtableFact => Boolean(fact))
+        .filter((fact) => {
+          if (seenResolve.has(fact.id)) return false
+          seenResolve.add(fact.id)
+          return true
+        })
+      if (matched.length) {
+        const now = new Date().toISOString()
+        this.emit({
+          type: 'host:pool-update', sessionId, roundId,
+          ops: matched.map((fact, index) => ({
+            opId: `resolve-${roundId}-${hostMode}-${index}`, action: 'set-status' as const,
+            fact: { ...fact, status: 'resolved' as const, updatedAt: now },
+          })),
+        })
+      }
+    }
     try {
-      const summary = await this.agents.get(participant.id)?.run({ sessionId, roundId, roundNumber: state.roundNumber, userInput: state.userInput, priorCards: state.cards, priorFacts: this.state.facts, workspaceResources: this.state.workspaceResources, workspaceContext: this.state.workspaceContext, workspaceTools: { execute: (name, input) => this.executeWorkspaceTool(name, input, participant.id, roundId) } })
+      const summary = await this.agents.get(participant.id)?.run({ sessionId, roundId, roundNumber: state.roundNumber, userInput: state.userInput, priorCards: state.cards, priorFacts: this.state.facts, workspaceResources: this.state.workspaceResources, workspaceContext: this.state.workspaceContext, stageId: stage.id, hostMode, workspaceTools: { execute: (name, input) => this.executeWorkspaceTool(name, input, participant.id, roundId) } })
         ?? `Fixture result for ${participant.id}`
       const now = new Date().toISOString()
       const card: AgentResultCard = {
@@ -287,6 +362,8 @@ export class RoundtableRuntime {
     let normalizedEvent: RoundtableEvent = event
     if (event.type === 'workspace:evidence-captured') {
       normalizedEvent = { ...event, refs: event.refs.map((ref) => ({ ...ref, sourceEventId: eventId })) }
+    } else if (event.type === 'host:pool-update') {
+      normalizedEvent = { ...event, ops: event.ops.map((op) => ({ ...op, fact: { ...op.fact, sourceEventIds: [...new Set([...op.fact.sourceEventIds, eventId])] } })) }
     } else if (event.type === 'workspace:tool-completed' && event.evidenceRef) {
       normalizedEvent = { ...event, evidenceRef: { ...event.evidenceRef, sourceEventId: eventId } }
     }

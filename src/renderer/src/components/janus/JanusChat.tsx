@@ -55,6 +55,14 @@ function formatMessageTime(timestamp: number): string {
    类型定义
    ════════════════════════════════════════════════════════════ */
 
+/** §37.8: one host question bubble groups all currently open questions. */
+export interface RoundtableHostQuestionBlock {
+  roundNumber: number
+  questions: Array<{ id: string; text: string }>
+  answeredCount: number
+  timestamp: number
+}
+
 interface JanusChatProps {
   /** 是否显示 */
   visible: boolean
@@ -72,6 +80,15 @@ interface JanusChatProps {
   messages: Message[]
   /** Optional roundtable work cards rendered inline with the discussion. */
   roundtableCards?: AgentResultCard[]
+  /**
+   * §37.8: open member questions rendered as host text bubbles inside the
+   * discussion stream, so questions stay visible without opening any card.
+   */
+  roundtableQuestions?: RoundtableHostQuestionBlock[]
+  /** Roundtable-only composer hint, e.g. answering open questions. */
+  inputPlaceholderOverride?: string
+  /** §37.10: open the questions detail island from the flow bubble. */
+  onOpenQuestions?: () => void
   onOpenAgentResult?: (card: AgentResultCard) => void
   /** 当前正在流式接收的内�?*/
   pendingContent: string
@@ -196,6 +213,9 @@ export function JanusChat({
   activeModel = null,
   modelNotice = null,
   roundtableCards = [],
+  roundtableQuestions = [],
+  inputPlaceholderOverride,
+  onOpenQuestions,
   onOpenAgentResult,
   resourceController,
   toolTraces = [],
@@ -339,6 +359,7 @@ export function JanusChat({
   const lastMessage = messages[messages.length - 1]
   const contentSignature = `${messages.length}|${lastMessage?.id ?? ''}|${lastMessage?.timestamp ?? 0}|${pendingContent?.length ?? 0}|${activePendingReasoning.text.length}|s${pendingSteerIds.join(',')}`
   const cardsSignature = roundtableCards.map((card) => `${card.id}@${card.updatedAt || card.createdAt}`).join('|')
+  const questionsSignature = roundtableQuestions.map((block) => `r${block.roundNumber}@${block.timestamp}#${block.questions.map((item) => item.id).join(',')}`).join('|')
   useLayoutEffect(() => {
     if (isAtBottomRef.current) {
       // Conversation history may hydrate after the pane mounts. Treat the
@@ -354,7 +375,7 @@ export function JanusChat({
     previousMessageCountRef.current = messages.length
     // messages.length / pendingContent / reasoning length are encoded in
     // contentSignature; they are listed explicitly to satisfy exhaustive-deps (no extra runs).
-  }, [contentSignature, cardsSignature, messages.length, pendingContent, activePendingReasoning.text.length, scrollToBottom])
+  }, [contentSignature, cardsSignature, questionsSignature, messages.length, pendingContent, activePendingReasoning.text.length, scrollToBottom])
 
   // Roundtable-only: after sending, land on the user's own message. Working
   // cards carry fresh timestamps and would otherwise pin the viewport below
@@ -1087,12 +1108,24 @@ export function JanusChat({
           </div>
         )}
 
-        {[...messages.map((msg) => ({ kind: 'message' as const, timestamp: msg.timestamp, msg })), ...roundtableCards.map((card) => ({ kind: 'card' as const, timestamp: Date.parse(card.updatedAt || card.createdAt) || 0, card }))]
+        {[...messages.map((msg) => ({ kind: 'message' as const, timestamp: msg.timestamp, msg })), ...roundtableCards.map((card) => ({ kind: 'card' as const, timestamp: Date.parse(card.updatedAt || card.createdAt) || 0, card })), ...roundtableQuestions.map((block) => ({ kind: 'questions' as const, timestamp: block.timestamp, block}))]
           .sort((a, b) => a.timestamp - b.timestamp)
           .map((entry) => entry.kind === 'card' ? (
           <div key={entry.card.id} className="janus-chat-message assistant janus-chat-agent-card-message">
             <div className="janus-chat-message-author">{entry.card.title}</div>
             <AgentResultCardView card={entry.card} onOpen={() => onOpenAgentResult?.(entry.card)} />
+          </div>
+        ) : entry.kind === 'questions' ? (
+          <div key={`host-questions-${entry.block.roundNumber}`} className="janus-chat-message assistant janus-chat-host-questions-message">
+            <div className="janus-chat-message-author">JanusX · 第{entry.block.roundNumber}轮 · 待确认{entry.block.questions.length}{entry.block.answeredCount > 0 ? ` · 已解决${entry.block.answeredCount}` : ''}</div>
+            <div className="janus-chat-message-content janus-chat-host-questions">
+              <p>本轮讨论产生{entry.block.questions.length}个待确认问题，直接在下方回答即可{entry.block.answeredCount > 0 ? `（已解决${entry.block.answeredCount}个）` : ''}。</p>
+              {onOpenQuestions ? (
+                <button type="button" className="janus-chat-host-questions-detail" onClick={onOpenQuestions}>
+                  {t('janus:roundtable.questions.viewDetail')}
+                </button>
+              ) : null}
+            </div>
           </div>
         ) : (() => { const msg = entry.msg; return (
           <div
@@ -1269,7 +1302,7 @@ export function JanusChat({
             className="janus-chat-input"
             rows={1}
             wrap="soft"
-            placeholder={isStreaming ? t('janus:chat.queue.inputPlaceholder') : t('janus:chat.inputPlaceholder')}
+            placeholder={isStreaming ? t('janus:chat.queue.inputPlaceholder') : (inputPlaceholderOverride ?? t('janus:chat.inputPlaceholder'))}
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
