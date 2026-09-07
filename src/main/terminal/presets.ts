@@ -25,6 +25,7 @@ export const PRESETS: Record<TerminalPreset, TerminalPresetConfig> = {
   claude: createPresetConfig('claude', 'Claude Code', '自动启动 Claude Code CLI'),
   codex: createPresetConfig('codex', 'Codex', '自动启动 Codex CLI'),
   opencode: createPresetConfig('opencode', 'OpenCode', '自动启动 OpenCode CLI'),
+  janus: createPresetConfig('janus', 'Janus', '自动启动 Janus CLI'),
 }
 
 export function getAutoCommand(preset: TerminalPreset): string | undefined {

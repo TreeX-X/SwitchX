@@ -248,7 +248,7 @@ function processCheckpointQueue(id: string): void {
   })
 }
 
-const AGENT_CLI_COMMANDS = ['claude', 'codex', 'opencode'] as const
+const AGENT_CLI_COMMANDS = ['claude', 'codex', 'opencode', 'janus'] as const
 type WarmupEngine = (typeof AGENT_CLI_COMMANDS)[number]
 
 function isWarmupEngine(value: string): value is WarmupEngine {
@@ -427,6 +427,12 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
   const hooksInstalledThisSession = new Set<Exclude<CheckpointEngine, 'shell' | 'manual'>>()
 
   async function ensureHooksInstalled(engine: Exclude<CheckpointEngine, 'shell' | 'manual'>): Promise<void> {
+    if (engine === 'janus') {
+      // janus TUI emits no hook events (turn status comes from PTY signals);
+      // there are no hook files to install. Mark and return.
+      hooksInstalledThisSession.add(engine)
+      return
+    }
     if (hooksInstalledThisSession.has(engine) && await hookConfigManager.isInstalled(engine)) return
     await hookConfigManager.ensureInstalled(engine)
     hooksInstalledThisSession.add(engine)
@@ -604,7 +610,9 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
     })()
 
     const hookEnvPromise = (async (): Promise<Record<string, string> | undefined> => {
-      if (engine === 'shell') return undefined
+      // janus TUI emits no hook events: skip bridge env entirely (no hook
+      // files exist to install and no turn pipeline consumes the ids).
+      if (engine === 'shell' || engine === 'janus') return undefined
       try {
         await hookBridge.start()
         await ensureHooksInstalled(engine)
@@ -708,7 +716,11 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
     }
 
     try {
-    if (engine !== 'shell') {
+    // Hook/coordinator/recorder/subagent-run registration is hook-payload
+    // driven; janus emits no hooks (turn status comes from PTY signals), so
+    // janus terminals skip all three systems plus the janus-runner registry.
+    // finishRun on unknown ids is a safe no-op, so exit/replace paths stay.
+    if (engine !== 'shell' && engine !== 'janus') {
       hookCoordinator.registerTerminal({
         terminalId: id,
         engine,

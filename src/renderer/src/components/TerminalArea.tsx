@@ -57,6 +57,7 @@ import terminalIcon from '@/assets/icons/terminal.svg'
 import claudeIcon from '@/assets/icons/claude.svg'
 import codexIcon from '@/assets/icons/codex.svg'
 import opencodeIcon from '@/assets/icons/opencode.svg'
+import janusIcon from '@/assets/icons/janus.svg'
 
 function JanusChatTabTitle({ conversationId }: { conversationId: string }) {
   const { t } = useI18n('terminal')
@@ -69,6 +70,7 @@ const PRESET_ICONS: Record<TerminalPreset, string> = {
   claude: claudeIcon,
   codex: codexIcon,
   opencode: opencodeIcon,
+  janus: janusIcon,
 }
 
 type TerminalPresetOption = { type: TerminalPreset; name: string; icon: string }
@@ -82,12 +84,13 @@ const PRESETS: TerminalPresetOption[] = [
   createPreset('claude'),
   createPreset('codex'),
   createPreset('opencode'),
+  createPreset('janus'),
 ]
 
 // 收起态 24×24 圆角 4,与工具栏相邻 h-6 w-6 rounded 按钮对齐
 const TERMINAL_MENU_COLLAPSED_SIZE = 24
-// 展开宽度与内容精确匹配: pl-2(8) + 4×28 图标 + 3×4 gap + pr-1(4) + 28 加号 + 2 边框
-const TERMINAL_MENU_EXPANDED_WIDTH = 166
+// 展开宽度与内容精确匹配: pl-2(8) + 5×28 图标 + 4×4 gap + pr-1(4) + 28 加号 + 2 边框
+const TERMINAL_MENU_EXPANDED_WIDTH = 198
 const TERMINAL_MENU_EXPANDED_HEIGHT = 28
 
 function providerLabel(preset: TerminalPreset, t: (key: string) => string): string {
@@ -98,6 +101,8 @@ function providerLabel(preset: TerminalPreset, t: (key: string) => string): stri
       return t('terminal:provider.codex')
     case 'opencode':
       return t('terminal:provider.opencode')
+    case 'janus':
+      return t('terminal:provider.janus')
     case 'shell':
       return t('terminal:provider.shell')
   }

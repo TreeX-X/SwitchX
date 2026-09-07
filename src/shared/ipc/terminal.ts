@@ -22,7 +22,7 @@ export const TERMINAL_EVENT_CHANNELS = {
   telemetry: 'terminal:telemetry',
 } as const
 
-export type TerminalAgentEngine = 'claude' | 'codex' | 'opencode'
+export type TerminalAgentEngine = 'claude' | 'codex' | 'opencode' | 'janus'
 
 // Sidebar display status of a terminal entry.
 // - wait: idle / no active output stream (AI CLI back at prompt, or shell always)

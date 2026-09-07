@@ -1,4 +1,4 @@
-export type TerminalPreset = 'shell' | 'claude' | 'codex' | 'opencode'
+export type TerminalPreset = 'shell' | 'claude' | 'codex' | 'opencode' | 'janus'
 
 export interface TerminalPresetMeta {
   name: string
@@ -37,6 +37,12 @@ const TERMINAL_PRESET_META: Record<TerminalPreset, TerminalPresetMeta> = {
     name: 'opencode',
     label: 'OpenCode',
     command: 'opencode'
+  },
+  janus: {
+    name: 'janus',
+    label: 'Janus',
+    command: 'janus',
+    args: ['tui']
   }
 }
 
@@ -49,7 +55,8 @@ export function isTerminalPreset(value: unknown): value is TerminalPreset {
     value === 'shell' ||
     value === 'claude' ||
     value === 'codex' ||
-    value === 'opencode'
+    value === 'opencode' ||
+    value === 'janus'
   )
 }
 

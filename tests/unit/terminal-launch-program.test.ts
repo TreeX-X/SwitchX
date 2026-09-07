@@ -9,6 +9,11 @@ describe('resolveTerminalLaunchProgram', () => {
     expect(resolveTerminalLaunchProgram('claude')).toEqual({ command: 'claude', args: [] })
     expect(resolveTerminalLaunchProgram('codex')).toEqual({ command: 'codex', args: [] })
     expect(resolveTerminalLaunchProgram('opencode')).toEqual({ command: 'opencode', args: [] })
+    expect(resolveTerminalLaunchProgram('janus')).toEqual({ command: 'janus', args: ['tui'] })
+  })
+
+  it('composes the janus tui auto command', () => {
+    expect(resolveTerminalLaunchCommand('janus')).toBe('janus tui')
   })
 
   it('returns undefined for shell preset', () => {

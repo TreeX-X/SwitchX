@@ -83,6 +83,8 @@ export function terminalBootLabel(preset: TerminalPreset): string {
       return 'Starting Codex…'
     case 'opencode':
       return 'Starting OpenCode…'
+    case 'janus':
+      return 'Starting Janus…'
     case 'shell':
       return 'Starting shell…'
   }

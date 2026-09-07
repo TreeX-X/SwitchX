@@ -3,7 +3,7 @@ import { OFFICE_SKILL_IDS } from '../../shared/office'
 import { officecliManager, type OfficecliManager } from './officecli-manager'
 
 export interface BuildOfficePromptInput {
-  terminalPreset: 'shell' | 'claude' | 'codex' | 'opencode'
+  terminalPreset: 'shell' | 'claude' | 'codex' | 'opencode' | 'janus'
   workspaceId: string
   skillId?: OfficeSkillId
 }

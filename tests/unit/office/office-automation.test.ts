@@ -22,6 +22,7 @@ describe('Office agent automation policy', () => {
   it('degrades unverified engine config surfaces explicitly', () => {
     expect(buildOfficeAgentSession('claude', 'root', undefined, 'mcp').mode).toBe('policy-only')
     expect(buildOfficeAgentSession('opencode', 'root', undefined, 'mcp').limitation).toContain('no verified durable')
+    expect(buildOfficeAgentSession('janus', 'root', undefined, 'mcp').limitation).toContain('janus has no verified durable')
   })
 
   it('prepares Office policy before PTY creation without terminal paste injection', () => {
