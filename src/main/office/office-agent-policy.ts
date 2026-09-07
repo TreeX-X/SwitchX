@@ -1,5 +1,5 @@
 import { delimiter } from 'path'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 import { OFFICE_PROJECT_POLICY } from './office-project-rules'
 
 export interface OfficeAgentSession {

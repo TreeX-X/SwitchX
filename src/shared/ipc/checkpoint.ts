@@ -1,4 +1,4 @@
-import type { AgentEngine } from './agent'
+import type { AgentEngine } from './janus-runner'
 
 export const CHECKPOINT_CHANNELS = {
   create: 'checkpoint:create',

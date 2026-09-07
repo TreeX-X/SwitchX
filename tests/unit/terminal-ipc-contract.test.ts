@@ -38,10 +38,10 @@ vi.mock('electron', () => ({
 vi.mock('../../src/main/terminal/manager', () => ({
   terminalManager: { appendOutput: vi.fn(), create: vi.fn(), getOutputReplay: vi.fn(), kill: vi.fn(), killAll: vi.fn(), resize: vi.fn(), write: vi.fn() },
 }))
-vi.mock('../../src/main/agent/checkpoint/checkpoint-manager', () => ({ checkpointManager: {} }))
+vi.mock('../../src/main/janus-agent/checkpoint/checkpoint-manager', () => ({ checkpointManager: {} }))
 vi.mock('../../src/main/janus/analyzer', () => ({ analyzer: {} }))
-vi.mock('../../src/main/agent/cli-resolver', () => ({ resolveCLIPath: vi.fn(async () => null) }))
-vi.mock('../../src/main/agent/subagent-run-registry', () => ({ subAgentRunRegistry: {} }))
+vi.mock('../../src/main/janus-runner/cli-resolver', () => ({ resolveCLIPath: vi.fn(async () => null) }))
+vi.mock('../../src/main/janus-runner/subagent-run-registry', () => ({ subAgentRunRegistry: {} }))
 vi.mock('../../src/main/notifications/agent-hook-bridge', () => ({ AgentHookBridge: class { start = vi.fn(async () => {}); stop = vi.fn(); getEnv = vi.fn(() => ({})) } }))
 vi.mock('../../src/main/notifications/agent-hook-config', () => ({ AgentHookConfigManager: class {} }))
 vi.mock('../../src/main/notifications/agent-hook-coordinator', () => ({ AgentHookCoordinator: class { dispose = vi.fn() } }))

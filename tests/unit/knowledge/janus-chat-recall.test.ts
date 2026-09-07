@@ -35,7 +35,7 @@ vi.mock('../../../src/main/llm/ai-runtime', () => ({
   generateText: vi.fn(),
   streamText,
 }))
-vi.mock('../../../src/main/agent/runtime/runtime', () => ({
+vi.mock('../../../src/main/janus-agent/runtime/runtime', () => ({
   workspaceAgentRuntime: {
     getSession,
     executeFunctionCall,
@@ -57,7 +57,7 @@ vi.mock('../../../src/main/agent/runtime/runtime', () => ({
 }))
 
 import { registerLlmHandlers } from '../../../src/main/ipc/llm-handlers'
-import { hasExplicitWorkspaceMutationIntent, prepareJanusChatRecall, toolTraceEntryFromResult } from '../../../src/main/llm/chat-orchestrator'
+import { hasExplicitWorkspaceMutationIntent, prepareJanusChatRecall, toolTraceEntryFromResult } from '../../../src/main/janus-agent/chat-orchestrator'
 
 const emptyResult: KnowledgeContextResult = {
   items: [],

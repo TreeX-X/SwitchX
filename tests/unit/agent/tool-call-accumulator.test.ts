@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { toAgentStreamEvent } from '../../../src/main/agent/stream/event-mapper'
-import { ToolCallAccumulator } from '../../../src/main/agent/stream/tool-call-accumulator'
+import { toAgentStreamEvent } from '../../../src/main/janus-agent/stream/event-mapper'
+import { ToolCallAccumulator } from '../../../src/main/janus-agent/stream/tool-call-accumulator'
 
 describe('ToolCallAccumulator', () => {
   it('emits one ready call after collecting fragmented JSON arguments', () => {

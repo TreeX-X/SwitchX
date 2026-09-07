@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { Blueprint } from '../../../shared/janus/types'
 import type { BlueprintOperation } from '../../../shared/janus/maintenance-types'
-import type { JanusAgentTool } from '../../agent/loop'
+import type { JanusAgentTool } from '../../janus-agent/loop'
 import { normalizeProposedOperations } from './changeset'
 
 const operationBase = {

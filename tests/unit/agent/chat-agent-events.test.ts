@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { toChatAgentEvent } from '../../../src/main/llm/chat-agent-events'
+import { toChatAgentEvent } from '../../../src/main/janus-agent/chat-agent-events'
 import { EMPTY_JANUS_RUNTIME_STATE, reduceChatAgentEvent, reduceJanusRuntimeState } from '../../../src/renderer/src/components/janus/janusRuntimeState'
 
 describe('Chat Agent events', () => {

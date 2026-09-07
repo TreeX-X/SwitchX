@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ToolResult } from '../../../src/shared/ipc/agent-runtime'
-import { toolResultToModelValue } from '../../../src/main/agent/runtime/tool-result'
+import { toolResultToModelValue } from '../../../src/main/janus-agent/runtime/tool-result'
 
 function completed(toolName: string, output: unknown): ToolResult {
   return {

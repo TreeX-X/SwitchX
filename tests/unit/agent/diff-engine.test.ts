@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateUnifiedDiff, threeWayMerge, parseConflictMarkers } from '../../../src/main/agent/checkpoint/diff-engine'
+import { generateUnifiedDiff, threeWayMerge, parseConflictMarkers } from '../../../src/main/janus-agent/checkpoint/diff-engine'
 
 describe('generateUnifiedDiff', () => {
   it('returns empty string for identical content', () => {

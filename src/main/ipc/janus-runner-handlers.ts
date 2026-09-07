@@ -1,16 +1,16 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { randomUUID } from 'crypto'
-import { agentStreamManager } from '../agent/stream-manager'
+import { agentStreamManager } from '../janus-runner/stream-manager'
 import { notifyAgentEvent } from '../notifications/agent-notifier'
 import { configService } from '../config/service'
-import type { AgentSpawnOptions } from '../agent/types'
+import type { AgentSpawnOptions } from '../janus-runner/types'
 import { normalizeAgentApprovalMode } from '../../shared/ipc/agent-runtime'
-import { subAgentRunRegistry } from '../agent/subagent-run-registry'
-import type { AgentEvent } from '../agent/types'
+import { subAgentRunRegistry } from '../janus-runner/subagent-run-registry'
+import type { AgentEvent } from '../janus-runner/types'
 import type { CaptureObservationInput } from '../../shared/knowledge'
 import { knowledgeObservationService } from '../knowledge/observation-service'
 import { logKnowledgeCaptureFailure } from '../knowledge/workspace-identity'
-import { AGENT_CHANNELS } from '../../shared/ipc/agent'
+import { AGENT_CHANNELS } from '../../shared/ipc/janus-runner'
 
 function summarizeAgentEvent(event: AgentEvent): string {
   switch (event.type) {

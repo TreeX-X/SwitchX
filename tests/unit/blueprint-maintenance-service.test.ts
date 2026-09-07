@@ -28,7 +28,7 @@ vi.mock('../../src/main/llm/ai-runtime', () => ({
   generateObject: mocks.generateObject,
   streamText: mocks.streamText,
 }))
-vi.mock('../../src/main/agent/runtime/runtime', () => ({
+vi.mock('../../src/main/janus-agent/runtime/runtime', () => ({
   workspaceAgentRuntime: {
     registry: { list: () => [] },
     createSession: mocks.createSession,

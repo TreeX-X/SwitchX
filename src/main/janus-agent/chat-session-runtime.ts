@@ -1,6 +1,6 @@
 import type { ModelInfo } from '@janusx/llm-core'
 import type { ToolResult } from '../../shared/ipc/agent-runtime'
-import type { JanusAgentMessage } from '../agent/loop'
+import type { JanusAgentMessage } from './loop'
 
 const DEFAULT_CONTEXT_WINDOW = 16_384
 const DEFAULT_RESERVED_OUTPUT_TOKENS = 2_048

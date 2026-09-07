@@ -1,4 +1,4 @@
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 import { configService } from '../config/service'
 import {
   JANUSX_SYNTHETIC_HOOK_EVENTS,

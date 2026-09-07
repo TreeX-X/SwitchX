@@ -1,4 +1,4 @@
-import type { ToolManifest } from '../agent/runtime/tool-manifest'
+import type { ToolManifest } from './runtime/tool-manifest'
 
 interface WorkspacePromptResource {
   workspaceName: string

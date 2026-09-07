@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { JanusWorkspaceFs } from '../../../src/main/agent/environment/janus-workspace-fs'
+import { JanusWorkspaceFs } from '../../../src/main/janus-agent/environment/janus-workspace-fs'
 
 const execFileAsync = promisify(execFile)
 

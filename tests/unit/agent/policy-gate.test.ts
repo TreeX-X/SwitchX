@@ -6,7 +6,7 @@ import {
   redactPolicyValue,
   redactWorkingValue,
   settleApprovalDecision,
-} from '../../../src/main/agent/runtime/policy-gate'
+} from '../../../src/main/janus-agent/runtime/policy-gate'
 import { normalizeAgentApprovalMode } from '../../../src/shared/ipc/agent-runtime'
 
 describe('workspace read policy', () => {

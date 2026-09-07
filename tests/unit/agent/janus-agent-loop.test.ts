@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { AgentSteeringPort, runJanusAgentLoop, type JanusAgentEvent, type JanusAgentMessage, type JanusAgentTool } from '../../../src/main/agent/loop/janus-agent-loop'
+import { AgentSteeringPort, runJanusAgentLoop, type JanusAgentEvent, type JanusAgentMessage, type JanusAgentTool } from '../../../src/main/janus-agent/loop/janus-agent-loop'
 
 const userMessage: JanusAgentMessage = { role: 'user', content: 'start' }
 

@@ -15,7 +15,7 @@ vi.mock('crypto', () => {
   }
 })
 
-vi.mock('../../../src/main/agent/checkpoint/git-adapter', () => {
+vi.mock('../../../src/main/janus-agent/checkpoint/git-adapter', () => {
   return {
     GitAdapter: vi.fn().mockImplementation(() => ({
       getCurrentBranch: vi.fn().mockResolvedValue('main'),
@@ -29,7 +29,7 @@ vi.mock('../../../src/main/agent/checkpoint/git-adapter', () => {
   }
 })
 
-vi.mock('../../../src/main/agent/checkpoint/blob-store', () => {
+vi.mock('../../../src/main/janus-agent/checkpoint/blob-store', () => {
   return {
     BlobStore: vi.fn().mockImplementation(() => ({
       initialize: vi.fn().mockResolvedValue(undefined),
@@ -86,7 +86,7 @@ vi.mock('fs/promises', () => {
 // --- Tests ---
 
 describe('CheckpointManager', () => {
-  let manager: import('../../../src/main/agent/checkpoint/checkpoint-manager').CheckpointManager
+  let manager: import('../../../src/main/janus-agent/checkpoint/checkpoint-manager').CheckpointManager
 
   beforeEach(async () => {
     // Reset counters and file state
@@ -101,7 +101,7 @@ describe('CheckpointManager', () => {
       mockFiles[join(root, 'README.md')] = `# ${root}`
     }
 
-    const { CheckpointManager } = await import('../../../src/main/agent/checkpoint/checkpoint-manager')
+    const { CheckpointManager } = await import('../../../src/main/janus-agent/checkpoint/checkpoint-manager')
     manager = new CheckpointManager()
     await manager.initialize('/workspace')
   })

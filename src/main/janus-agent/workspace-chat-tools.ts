@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import type { ExecuteToolInput, ToolResult } from '../../shared/ipc/agent-runtime'
-import type { ToolManifest } from '../agent/runtime/tool-manifest'
-import { redactPolicyValue } from '../agent/runtime/policy-gate'
-import { toolResultToModelValue } from '../agent/runtime/tool-result'
+import type { ToolManifest } from './runtime/tool-manifest'
+import { redactPolicyValue } from './runtime/policy-gate'
+import { toolResultToModelValue } from './runtime/tool-result'
 
 interface WorkspaceChatRuntime {
   executeFunctionCall(input: ExecuteToolInput, callerId?: string): Promise<ToolResult>

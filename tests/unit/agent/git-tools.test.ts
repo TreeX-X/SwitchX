@@ -4,8 +4,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { afterEach, describe, expect, it } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
-import { registerGitTools } from '../../../src/main/agent/runtime/tools/git-tools'
+import { WorkspaceAgentRuntime } from '../../../src/main/janus-agent/runtime/runtime'
+import { registerGitTools } from '../../../src/main/janus-agent/runtime/tools/git-tools'
 
 const execFileAsync = promisify(execFile)
 const temporaryDirectories: string[] = []

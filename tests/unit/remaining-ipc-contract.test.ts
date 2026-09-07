@@ -1,5 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { AGENT_CHANNELS, SUBAGENT_RUN_CHANNELS, type AgentAPI, type SubAgentRunAPI } from '../../src/shared/ipc/agent'
+import { AGENT_CHANNELS, SUBAGENT_RUN_CHANNELS, type AgentAPI, type SubAgentRunAPI } from '../../src/shared/ipc/janus-runner'
 import { CHECKPOINT_CHANNELS, type CheckpointAPI } from '../../src/shared/ipc/checkpoint'
 import { GIT_CHANNELS, type GitAPI } from '../../src/shared/ipc/git'
 import { LLM_CHANNELS, type LlmAPI } from '../../src/shared/ipc/llm'

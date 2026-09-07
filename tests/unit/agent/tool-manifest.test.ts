@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createToolManifests, providerToolName } from '../../../src/main/agent/runtime/tool-manifest'
+import { createToolManifests, providerToolName } from '../../../src/main/janus-agent/runtime/tool-manifest'
 
 describe('tool manifest', () => {
   it('maps canonical Runtime names to provider-safe names', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
-import { ToolRegistry } from '../../../src/main/agent/runtime/registry'
+import { WorkspaceAgentRuntime } from '../../../src/main/janus-agent/runtime/runtime'
+import { ToolRegistry } from '../../../src/main/janus-agent/runtime/registry'
 import type { ApprovalRequest } from '../../../src/shared/ipc/agent-runtime'
 
 const echoTool = (execute = vi.fn(async (input) => input)) => ({

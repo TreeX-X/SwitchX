@@ -1,4 +1,4 @@
-import type { AgentStreamEvent } from '../agent/stream'
+import type { AgentStreamEvent } from './stream'
 import type { ChatAgentEvent } from '../../shared/ipc/llm'
 
 const SENSITIVE_ARGUMENT_KEY = /authorization|password|secret|token|api[-_]?key/i

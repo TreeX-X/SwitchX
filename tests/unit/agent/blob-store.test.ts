@@ -3,7 +3,7 @@ import { mkdtemp, rm } from 'fs/promises'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { BlobStore } from '../../../src/main/agent/checkpoint/blob-store'
+import { BlobStore } from '../../../src/main/janus-agent/checkpoint/blob-store'
 
 let tmpDir: string
 let store: BlobStore

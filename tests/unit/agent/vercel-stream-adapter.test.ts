@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { runJanusAgentLoop, type JanusAgentEvent } from '../../../src/main/agent/loop/janus-agent-loop'
-import { createLoopToolsFromVercel, createVercelStream, toVercelMessages } from '../../../src/main/agent/loop/vercel-stream-adapter'
+import { runJanusAgentLoop, type JanusAgentEvent } from '../../../src/main/janus-agent/loop/janus-agent-loop'
+import { createLoopToolsFromVercel, createVercelStream, toVercelMessages } from '../../../src/main/janus-agent/loop/vercel-stream-adapter'
 
 describe('Vercel stream adapter', () => {
   it('streams one model step without exposing executors to the SDK', async () => {

@@ -5,11 +5,11 @@ vi.mock('child_process', () => ({
   spawn: vi.fn(),
 }))
 
-vi.mock('../../../src/main/agent/cli-resolver', () => ({
+vi.mock('../../../src/main/janus-runner/cli-resolver', () => ({
   resolveCLIPath: vi.fn().mockResolvedValue('/usr/bin/claude'),
 }))
 
-vi.mock('../../../src/main/agent/parsers', () => ({
+vi.mock('../../../src/main/janus-runner/parsers', () => ({
   createParser: vi.fn(() => ({
     parseLine: vi.fn((json: Record<string, unknown>) => {
       // Default parser: emit a text-chunk for each line
@@ -44,7 +44,7 @@ type AgentStreamManagerInstance = InstanceType<
 
 async function importManager() {
   const { AgentStreamManager } = await import(
-    '../../../src/main/agent/stream-manager'
+    '../../../src/main/janus-runner/stream-manager'
   )
   return AgentStreamManager
 }
@@ -60,11 +60,11 @@ describe('AgentStreamManager', () => {
     spawnMock = cp.spawn as unknown as ReturnType<typeof vi.fn>
     spawnMock.mockReset()
 
-    const resolver = await import('../../../src/main/agent/cli-resolver')
+    const resolver = await import('../../../src/main/janus-runner/cli-resolver')
     resolveCLIPathMock = resolver.resolveCLIPath as unknown as ReturnType<typeof vi.fn>
     resolveCLIPathMock.mockReset().mockResolvedValue('/usr/bin/claude')
 
-    const parsers = await import('../../../src/main/agent/parsers')
+    const parsers = await import('../../../src/main/janus-runner/parsers')
     createParserMock = parsers.createParser as unknown as ReturnType<typeof vi.fn>
     createParserMock.mockReset().mockImplementation(() => ({
       parseLine: vi.fn((json: Record<string, unknown>) => {

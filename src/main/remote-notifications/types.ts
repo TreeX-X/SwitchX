@@ -4,7 +4,7 @@ import type {
   RemoteNotificationSettings,
   RemoteSendResult,
 } from '../../shared/notifications'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 
 export type RemoteNotificationType = 'completed' | 'failed' | 'attention' | 'approval'
 export type RemoteNotificationSeverity = 'info' | 'success' | 'warning' | 'error'

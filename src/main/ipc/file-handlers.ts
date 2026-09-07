@@ -3,8 +3,8 @@ import { readdir, realpath, stat } from 'fs/promises'
 import { extname, join, resolve, sep } from 'path'
 import { FILE_CHANNELS } from '../../shared/ipc/workspace'
 import type { WorkspaceSourceFile, WorkspaceSourceFilesResult } from '../../shared/ipc/workspace'
-import { authorizeRendererAction, type RendererActionAuthorizer } from '../agent/runtime/renderer-authorization'
-import { janusWorkspaceFs } from '../agent/environment/janus-workspace-fs'
+import { authorizeRendererAction, type RendererActionAuthorizer } from '../janus-agent/runtime/renderer-authorization'
+import { janusWorkspaceFs } from '../janus-agent/environment/janus-workspace-fs'
 
 const MIME_MAP: Record<string, string> = {
   '.png': 'image/png',

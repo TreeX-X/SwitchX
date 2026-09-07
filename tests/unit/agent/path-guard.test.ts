@@ -7,8 +7,8 @@ import {
   readWorkspaceFile,
   resolveWorkspaceTarget,
   WorkspacePathGuardError,
-} from '../../../src/main/agent/runtime/path-guard'
-import { evaluateWorkspaceReadPolicy } from '../../../src/main/agent/runtime/policy-gate'
+} from '../../../src/main/janus-agent/runtime/path-guard'
+import { evaluateWorkspaceReadPolicy } from '../../../src/main/janus-agent/runtime/policy-gate'
 
 const fileOpenHooks = vi.hoisted(() => ({
   beforeOpen: undefined as undefined | (() => Promise<void>),

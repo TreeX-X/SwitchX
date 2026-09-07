@@ -1,6 +1,6 @@
 import type { BrowserWindow } from 'electron'
 import { TERMINAL_EVENT_CHANNELS } from '../../shared/ipc/terminal'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 import { configService } from '../config/service'
 import { remoteNotificationDispatcher } from '../remote-notifications/dispatcher'
 import type { RemoteNotificationType } from '../remote-notifications/types'

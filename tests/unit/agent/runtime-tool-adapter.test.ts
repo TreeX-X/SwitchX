@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createJanusRuntimeReadOnlyTools, createJanusRuntimeTools, createJanusRuntimeToolsForResources } from '../../../src/main/agent/loop/runtime-tool-adapter'
+import { createJanusRuntimeReadOnlyTools, createJanusRuntimeTools, createJanusRuntimeToolsForResources } from '../../../src/main/janus-agent/loop/runtime-tool-adapter'
 import type { ToolResult } from '../../../src/shared/ipc/agent-runtime'
 
 function result(overrides: Partial<ToolResult> = {}): ToolResult {

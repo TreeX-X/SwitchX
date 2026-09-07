@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { ChatSessionRuntime } from '../../../src/main/llm/chat-session-runtime'
-import { buildChatSystemPrompt } from '../../../src/main/llm/system-prompt-builder'
-import type { ToolManifest } from '../../../src/main/agent/runtime/tool-manifest'
+import { ChatSessionRuntime } from '../../../src/main/janus-agent/chat-session-runtime'
+import { buildChatSystemPrompt } from '../../../src/main/janus-agent/system-prompt-builder'
+import type { ToolManifest } from '../../../src/main/janus-agent/runtime/tool-manifest'
 import type { ToolResult } from '../../../src/shared/ipc/agent-runtime'
 
 function toolResult(overrides: Partial<ToolResult>): ToolResult {

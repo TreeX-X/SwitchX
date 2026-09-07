@@ -2,8 +2,8 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
-import { commandExecutionMode, registerCommandTools } from '../../../src/main/agent/runtime/tools/command-tools'
+import { WorkspaceAgentRuntime } from '../../../src/main/janus-agent/runtime/runtime'
+import { commandExecutionMode, registerCommandTools } from '../../../src/main/janus-agent/runtime/tools/command-tools'
 
 const temporaryDirectories: string[] = []
 
@@ -154,7 +154,7 @@ describe('command Agent Runtime tool', () => {
   })
 
   it('starts long commands in the background and lets project tools read and stop them', { timeout: 30_000 }, async () => {
-    const { registerProjectTools } = await import('../../../src/main/agent/runtime/tools/project-tools')
+    const { registerProjectTools } = await import('../../../src/main/janus-agent/runtime/tools/project-tools')
     const { getProjectRunner } = await import('../../../src/main/project/runner/service')
     const { runtime, session } = await createRuntime()
     registerProjectTools(runtime.registry)
@@ -221,7 +221,7 @@ describe('command Agent Runtime tool', () => {
   })
 
   it('R3: kills background jobs after timeoutMs and records timedOut', { timeout: 30_000 }, async () => {
-    const { registerProjectTools } = await import('../../../src/main/agent/runtime/tools/project-tools')
+    const { registerProjectTools } = await import('../../../src/main/janus-agent/runtime/tools/project-tools')
     const { getProjectRunner } = await import('../../../src/main/project/runner/service')
     const { runtime, session } = await createRuntime()
     registerProjectTools(runtime.registry)
@@ -307,7 +307,7 @@ describe('command Agent Runtime tool', () => {
   })
 
   it('R4: passes allowlisted env to background jobs', { timeout: 30_000 }, async () => {
-    const { registerProjectTools } = await import('../../../src/main/agent/runtime/tools/project-tools')
+    const { registerProjectTools } = await import('../../../src/main/janus-agent/runtime/tools/project-tools')
     const { getProjectRunner } = await import('../../../src/main/project/runner/service')
     const { runtime, session } = await createRuntime()
     registerProjectTools(runtime.registry)

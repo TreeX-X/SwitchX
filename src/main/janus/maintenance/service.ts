@@ -30,16 +30,16 @@ import { buildReverseOperations, scopeNodeIds, selectOperations } from './change
 import { JANUS_EVENT_CHANNELS } from '../../../shared/ipc/janus'
 import { workspacesDir } from '../blueprint-paths'
 import { readJson } from '../blueprint-persistence'
-import { janusWorkspaceFs } from '../../agent/environment/janus-workspace-fs'
-import { workspaceAgentRuntime } from '../../agent/runtime/runtime'
+import { janusWorkspaceFs } from '../../janus-agent/environment/janus-workspace-fs'
+import { workspaceAgentRuntime } from '../../janus-agent/runtime/runtime'
 import {
   createJanusRuntimeReadOnlyToolsForResources,
   createVercelModelTools,
   createVercelStream,
   runJanusAgentLoop,
   type JanusAgentMessage,
-} from '../../agent/loop'
-import { createWorkspaceChatTools } from '../../llm/workspace-chat-tools'
+} from '../../janus-agent/loop'
+import { createWorkspaceChatTools } from '../../janus-agent/workspace-chat-tools'
 import {
   blueprintProposalSchema,
   blueprintReadModelTool,

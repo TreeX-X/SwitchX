@@ -8,7 +8,7 @@
  *              - abort 后跳过 observation 落库；窗口销毁后不再 reply
  */
 
-import { llmService } from './LlmService'
+import { llmService } from '../llm/LlmService'
 import { configService, DEFAULT_AGENT_MAX_STEPS } from '../config/service'
 import { knowledgeObservationService } from '../knowledge/observation-service'
 import { knowledgeProcessingQueue } from '../knowledge/processing-queue'
@@ -17,11 +17,11 @@ import type { KnowledgeContextResult, KnowledgeRecallTrace } from '../../shared/
 import { LLM_CHANNELS } from '../../shared/ipc/llm'
 import type { ChatAgentEvent, ChatToolTraceEntry, ChatWorkspaceResource } from '../../shared/ipc/llm'
 import type { ToolResult } from '../../shared/ipc/agent-runtime'
-import { workspaceAgentRuntime } from '../agent/runtime/runtime'
-import { createToolManifests } from '../agent/runtime/tool-manifest'
+import { workspaceAgentRuntime } from './runtime/runtime'
+import { createToolManifests } from './runtime/tool-manifest'
 import { createToolPreview, createWorkspaceChatTools } from './workspace-chat-tools'
-import { createJanusRuntimeToolsForResources, createVercelModelTools, createVercelStream, runJanusAgentLoop, AgentSteeringPort, type JanusAgentMessage } from '../agent/loop'
-import { toAgentStreamEvent } from '../agent/stream'
+import { createJanusRuntimeToolsForResources, createVercelModelTools, createVercelStream, runJanusAgentLoop, AgentSteeringPort, type JanusAgentMessage } from './loop'
+import { toAgentStreamEvent } from './stream'
 import { toChatAgentEvent } from './chat-agent-events'
 import { ChatSessionRuntime } from './chat-session-runtime'
 import { buildChatSystemPrompt } from './system-prompt-builder'

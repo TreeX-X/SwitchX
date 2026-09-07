@@ -3,11 +3,11 @@ import { mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from 'fs/p
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
+import { WorkspaceAgentRuntime } from '../../../src/main/janus-agent/runtime/runtime'
 import {
   registerWorkspaceTools,
   workspaceListTool,
-} from '../../../src/main/agent/runtime/tools/workspace-tools'
+} from '../../../src/main/janus-agent/runtime/tools/workspace-tools'
 
 const fileStatHooks = vi.hoisted(() => ({
   pathStatDevice: undefined as bigint | undefined,

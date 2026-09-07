@@ -1,8 +1,8 @@
 import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
-import { resolveWorkspaceTarget } from '../agent/runtime/path-guard'
-import { evaluateWorkspaceReadPolicy, isSensitivePath, redactHighConfidenceSecrets } from '../agent/runtime/policy-gate'
-import { janusWorkspaceFs } from '../agent/environment/janus-workspace-fs'
+import { resolveWorkspaceTarget } from '../janus-agent/runtime/path-guard'
+import { evaluateWorkspaceReadPolicy, isSensitivePath, redactHighConfidenceSecrets } from '../janus-agent/runtime/policy-gate'
+import { janusWorkspaceFs } from '../janus-agent/environment/janus-workspace-fs'
 
 export interface RoundtableWorkspaceToolContext { workspaceId: string; workspaceRoot: string; signal: AbortSignal }
 

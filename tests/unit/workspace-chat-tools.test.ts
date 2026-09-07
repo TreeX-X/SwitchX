@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { ToolResult } from '../../src/shared/ipc/agent-runtime'
-import { createWorkspaceChatTools } from '../../src/main/llm/workspace-chat-tools'
-import type { ToolManifest } from '../../src/main/agent/runtime/tool-manifest'
+import { createWorkspaceChatTools } from '../../src/main/janus-agent/workspace-chat-tools'
+import type { ToolManifest } from '../../src/main/janus-agent/runtime/tool-manifest'
 
 function result(overrides: Partial<ToolResult> = {}): ToolResult {
   return {

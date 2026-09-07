@@ -1,11 +1,11 @@
 import type { BrowserWindow, IpcMain } from 'electron'
 import { AGENT_RUNTIME_CHANNELS, type ApprovalResult, type CreateAgentSessionInput, type ExecuteToolInput, type AgentApprovalMode } from '../../shared/ipc/agent-runtime'
 import { configService } from '../config/service'
-import { workspaceAgentRuntime } from '../agent/runtime/runtime'
-import { registerWorkspaceTools } from '../agent/runtime/tools/workspace-tools'
-import { registerProjectTools } from '../agent/runtime/tools/project-tools'
-import { registerGitTools } from '../agent/runtime/tools/git-tools'
-import { registerCommandTools } from '../agent/runtime/tools/command-tools'
+import { workspaceAgentRuntime } from '../janus-agent/runtime/runtime'
+import { registerWorkspaceTools } from '../janus-agent/runtime/tools/workspace-tools'
+import { registerProjectTools } from '../janus-agent/runtime/tools/project-tools'
+import { registerGitTools } from '../janus-agent/runtime/tools/git-tools'
+import { registerCommandTools } from '../janus-agent/runtime/tools/command-tools'
 import type { ResolveWorkspaceRoot } from '../office/office-workspace-guard'
 
 let registered = false

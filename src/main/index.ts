@@ -143,7 +143,7 @@ async function bootstrapApp(): Promise<void> {
     import('./office/officecli-manager'),
     import('./bootstrap/services'),
     import('./terminal/manager'),
-    import('./agent/stream-manager'),
+    import('./janus-runner/stream-manager'),
     import('./janus/analyzer'),
     import('./janus/maintenance/service'),
     import('./notifications/desktop-toast-window'),

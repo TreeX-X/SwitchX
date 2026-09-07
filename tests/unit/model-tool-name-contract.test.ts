@@ -6,7 +6,7 @@
  * both repos in the same release, otherwise blueprint tools silently vanish.
  */
 import { describe, expect, it } from 'vitest'
-import { createWorkspaceChatTools } from '../../src/main/llm/workspace-chat-tools'
+import { createWorkspaceChatTools } from '../../src/main/janus-agent/workspace-chat-tools'
 
 const ALL_MODEL_TOOLS = [
   'workspace_list', 'workspace_search', 'workspace_read', 'workspace_edit', 'workspace_create',

@@ -1,13 +1,13 @@
 import { BrowserWindow } from 'electron'
 import * as electron from 'electron'
-import type { AgentEvent, AgentSpawnOptions } from '../agent/types'
+import type { AgentEvent, AgentSpawnOptions } from '../janus-runner/types'
 import {
   DEFAULT_AGENT_NOTIFICATION_SETTINGS,
   normalizeAgentNotificationSettings,
   type AgentNotificationSettings,
 } from '../../shared/notifications'
 import { desktopToastWindow, type DesktopToastPayload } from './desktop-toast-window'
-import { AGENT_CHANNELS } from '../../shared/ipc/agent'
+import { AGENT_CHANNELS } from '../../shared/ipc/janus-runner'
 
 interface AgentNotificationContext {
   sessionId: string

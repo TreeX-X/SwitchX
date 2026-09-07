@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { clearCache, selectWindowsSpawnPath } from '../../../src/main/agent/cli-resolver'
+import { clearCache, selectWindowsSpawnPath } from '../../../src/main/janus-runner/cli-resolver'
 
 describe('selectWindowsSpawnPath', () => {
   afterEach(() => {
@@ -146,7 +146,7 @@ describe('resolveCLIPath (win32 integration via mocks)', () => {
 
     try {
       const { resolveCLIPath, clearCache: clear } = await import(
-        '../../../src/main/agent/cli-resolver'
+        '../../../src/main/janus-runner/cli-resolver'
       )
       clear()
       const resolved = await resolveCLIPath('opencode')

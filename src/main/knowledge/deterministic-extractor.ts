@@ -36,7 +36,7 @@ import { knowledgeAuditService } from './audit-service'
 import { knowledgeTruthService } from './truth-service'
 import { knowledgeReviewService } from './review-service'
 import { configService } from '../config/service'
-import { redactHighConfidenceSecrets } from '../agent/runtime/policy-gate'
+import { redactHighConfidenceSecrets } from '../janus-agent/runtime/policy-gate'
 
 const FACT_CANDIDATES_FILE = join('facts', 'candidates.jsonl')
 const GRAPH_CANDIDATES_FILE = join('graph', 'candidates.jsonl')

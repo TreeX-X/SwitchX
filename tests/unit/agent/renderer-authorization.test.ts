@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const record = vi.hoisted(() => vi.fn(async () => undefined))
-vi.mock('../../../src/main/agent/runtime/policy-audit-store', () => ({
+vi.mock('../../../src/main/janus-agent/runtime/policy-audit-store', () => ({
   FilePolicyAuditStore: class { record = record },
 }))
 
-import { authorizeRendererAction } from '../../../src/main/agent/runtime/renderer-authorization'
+import { authorizeRendererAction } from '../../../src/main/janus-agent/runtime/renderer-authorization'
 
 const event = { sender: { id: 17 } } as never
 const request = {
