@@ -1,8 +1,0 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <!-- 通用终端图标：黑色方块 + 绿色提示符 + 光标 -->
-  <rect x="8" y="12" width="48" height="40" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
-  <text x="14" y="32" fill="#4ade80" font-family="monospace" font-size="16" font-weight="bold">&gt;</text>
-  <rect x="26" y="24" width="2" height="12" fill="#4ade80">
-    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
-  </rect>
-</svg>
