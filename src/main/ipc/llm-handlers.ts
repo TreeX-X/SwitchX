@@ -23,14 +23,14 @@ import {
   steerChatStream,
   type ChatMessage,
   type ChatStreamRequest,
-} from '../janus-agent/chat-orchestrator'
+} from '../llm/chat-orchestrator'
 
 export {
   abortAllChatStreams,
   prepareJanusChatRecall,
   toolTraceEntryFromResult,
   toolTraceHistoryMessage,
-} from '../janus-agent/chat-orchestrator'
+} from '../llm/chat-orchestrator'
 
 /** 对话请求参数 */
 interface ChatRequest {

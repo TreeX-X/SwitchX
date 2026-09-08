@@ -15,7 +15,7 @@ import {
 import { sortWorkspaceSidebar } from '../../shared/workspace-sidebar'
 import { SYSTEM_CHANNELS } from '../../shared/ipc/system'
 import { authorizeRendererAction, type RendererActionAuthorizer } from '../agent/runtime/shell-runtime'
-import { resolveCLIPath } from '../agent/cli-resolver'
+import { resolveCLIPath } from '../janus-runner/cli-resolver'
 import { buildVSCodeLaunchArgs } from '../ide-launch'
 
 const WORKSPACES_DIR = join(app.getPath('userData'), 'janusx', 'workspaces')
