@@ -16,6 +16,7 @@ import terminalIcon from '@/assets/icons/terminal.svg'
 import claudeIcon from '@/assets/icons/claude.svg'
 import codexIcon from '@/assets/icons/codex.svg'
 import opencodeIcon from '@/assets/icons/opencode.svg'
+import janusIcon from '@/assets/icons/janus.svg'
 import {
   clearWorkspaceSidebarGroup,
   groupWorkspaceInSidebar,
@@ -161,6 +162,8 @@ function terminalPresetLabel(preset: Terminal['preset'], t: (key: string) => str
       return t('terminal:provider.codex')
     case 'opencode':
       return t('terminal:provider.opencode')
+    case 'janus':
+      return t('terminal:provider.janus')
     default:
       return t('terminal:provider.shell')
   }
@@ -171,6 +174,7 @@ const TERMINAL_PRESET_ICONS: Record<Terminal['preset'], string> = {
   claude: claudeIcon,
   codex: codexIcon,
   opencode: opencodeIcon,
+  janus: janusIcon,
 }
 
 function TerminalStatusIndicator({ status }: { status: Terminal['status'] }) {

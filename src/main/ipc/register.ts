@@ -7,7 +7,7 @@ import { createProductionOfficeOperations } from '../office/office-handler-opera
 import type { BrowserSurfaceManager } from '../browser/surface-manager'
 import type { ManagedBinaryInstaller } from '../language-service/installer'
 import type { LanguageServiceId } from '../../shared/ipc/language-service'
-import { registerAgentHandlers } from './agent-handlers'
+import { registerAgentHandlers } from './janus-runner-handlers'
 import { registerBrowserHandlers } from './browser-handlers'
 import { registerCheckpointHandlers } from './checkpoint-handlers'
 import { registerFileHandlers } from './file-handlers'
@@ -34,7 +34,7 @@ import { runLlmStage } from '../knowledge/llm-stage'
 import { terminalManager } from '../terminal/manager'
 import { analyzer } from '../janus/analyzer'
 import { blueprintMaintenanceService } from '../janus/maintenance/service'
-import { subAgentRunRegistry } from '../agent/subagent-run-registry'
+import { subAgentRunRegistry } from '../janus-runner/subagent-run-registry'
 import { ipcMain } from 'electron'
 import { registerAgentRuntimeHandlers } from './agent-runtime-handlers'
 
@@ -55,7 +55,7 @@ let applicationIpcRegistered = false
 /**
  * 当前主窗口。handler 通过 getter 读取，而非按值捕获——
  * macOS activate / second-instance 重建窗口后，旧闭包不再持有已销毁窗口，
- * 新窗口也能继续收到 terminal/agent/checkpoint 事件（audit M1）。
+ * 新窗口也能继续收到 terminal/janus-agent/checkpoint 事件（audit M1）。
  */
 let currentMainWindow: BrowserWindow | null = null
 

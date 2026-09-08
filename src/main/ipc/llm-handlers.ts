@@ -1,7 +1,7 @@
 /**
  * @file LLM IPC Handlers
  * @description IPC 通信处理器，暴露 LLM 服务给渲染进程。
- *              流式聊天编排已下沉到 llm/chat-orchestrator（audit A2），
+ *              流式聊天编排已下沉到 janus-agent/chat-orchestrator（audit A2），
  *              本文件只做参数解包与 handler 注册。
  */
 
@@ -23,14 +23,14 @@ import {
   steerChatStream,
   type ChatMessage,
   type ChatStreamRequest,
-} from '../llm/chat-orchestrator'
+} from '../janus-agent/chat-orchestrator'
 
 export {
   abortAllChatStreams,
   prepareJanusChatRecall,
   toolTraceEntryFromResult,
   toolTraceHistoryMessage,
-} from '../llm/chat-orchestrator'
+} from '../janus-agent/chat-orchestrator'
 
 /** 对话请求参数 */
 interface ChatRequest {

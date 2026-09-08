@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SubAgentRunRegistry } from '../../../src/main/agent/subagent-run-registry'
+import { SubAgentRunRegistry } from '../../../src/main/janus-runner/subagent-run-registry'
 
 describe('SubAgentRunRegistry', () => {
   it('creates, updates, finishes, lists, and removes runs', () => {

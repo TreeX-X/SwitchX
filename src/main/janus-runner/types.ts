@@ -1,5 +1,5 @@
-import type { AgentEngine, AgentEvent } from '../../shared/ipc/agent'
-export type { AgentEngine, AgentEvent, AgentSpawnOptions } from '../../shared/ipc/agent'
+import type { AgentEngine, AgentEvent } from '../../shared/ipc/janus-runner'
+export type { AgentEngine, AgentEvent, AgentSpawnOptions } from '../../shared/ipc/janus-runner'
 
 export interface StreamParser {
   parseLine(json: Record<string, unknown>): AgentEvent[]

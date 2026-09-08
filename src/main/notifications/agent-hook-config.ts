@@ -2,7 +2,7 @@ import { app } from 'electron'
 import { homedir } from 'os'
 import { dirname, isAbsolute, join } from 'path'
 import { access, mkdir, readFile, writeFile } from 'fs/promises'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 import type { AgentHookBridgeEnv } from './agent-hook-bridge'
 
 export const JANUSX_HOOK_COMMAND_MARKER = 'janusx-agent-hook-v2'

@@ -69,9 +69,7 @@ AGENTS.md
 # JanusX local runtime scratch
 .janusX/
 
-# Design & Documentation (prototypes, tech proposals)
+# Design & Documentation (prototypes, tech proposals, local-only)
 design-mockups/
-docs/*
-!docs/06-外部集成/
-docs/06-外部集成/*
-!docs/06-外部集成/飞书双向控制使用指南.md
+/design/
+/docs/

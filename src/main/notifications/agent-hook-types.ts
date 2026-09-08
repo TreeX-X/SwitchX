@@ -1,4 +1,4 @@
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 
 export type AgentHookSource = AgentEngine
 

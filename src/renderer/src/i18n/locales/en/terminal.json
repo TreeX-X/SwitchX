@@ -76,7 +76,8 @@
     "shell": "Shell",
     "claude": "Claude Code",
     "codex": "Codex",
-    "opencode": "OpenCode"
+    "opencode": "OpenCode",
+    "janus": "Janus"
   },
   "time": {
     "justNow": "just now",
@@ -115,6 +116,7 @@
     "claude": "Claude",
     "codex": "Codex",
     "opencode": "OpenCode",
+    "janus": "Janus",
     "shell": "Shell"
   },
   "selector": {

@@ -7,6 +7,12 @@ describe('Terminal Presets', () => {
     expect(getAutoCommand('claude')).toBe('claude')
   })
 
+  it('should return the janus tui auto command and preset name', async () => {
+    const { getAutoCommand, getPresetName } = await import('../../src/main/terminal/presets')
+    expect(getAutoCommand('janus')).toBe('janus tui')
+    expect(getPresetName('janus')).toBe('Janus')
+  })
+
   it('should return undefined for shell preset', async () => {
     const { getAutoCommand } = await import('../../src/main/terminal/presets')
     expect(getAutoCommand('shell')).toBeUndefined()
@@ -25,6 +31,7 @@ describe('Terminal Presets', () => {
     expect(PRESETS).toHaveProperty('claude')
     expect(PRESETS).toHaveProperty('codex')
     expect(PRESETS).toHaveProperty('opencode')
+    expect(PRESETS).toHaveProperty('janus')
   })
 })
 

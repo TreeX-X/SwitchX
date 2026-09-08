@@ -44,6 +44,11 @@ const ENGINE_TAG_STYLES: Record<string, { color: string; bg: string; border: str
     bg: 'rgba(255,120,48,0.08)',
     border: 'rgba(255,120,48,0.2)',
   },
+  janus: {
+    color: '#34d399',
+    bg: 'rgba(52,211,153,0.08)',
+    border: 'rgba(52,211,153,0.2)',
+  },
 }
 
 export function CheckpointPanel() {
@@ -54,6 +59,7 @@ export function CheckpointPanel() {
     if (key === 'claude') return t('terminal:engine.claude')
     if (key === 'codex') return t('terminal:engine.codex')
     if (key === 'opencode') return t('terminal:engine.opencode')
+    if (key === 'janus') return t('terminal:engine.janus')
     return key
   }
   const {
@@ -147,7 +153,8 @@ export function CheckpointPanel() {
             { value: 'shell', label: t('terminal:engine.shell') },
             { value: 'claude', label: t('terminal:engine.claude') },
             { value: 'codex', label: t('terminal:engine.codex') },
-            { value: 'opencode', label: t('terminal:engine.opencode') }
+            { value: 'opencode', label: t('terminal:engine.opencode') },
+            { value: 'janus', label: t('terminal:engine.janus') }
           ]}
           className="flex-1 rounded"
           style={{

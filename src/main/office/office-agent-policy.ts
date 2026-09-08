@@ -1,5 +1,5 @@
 import { delimiter } from 'path'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 import { OFFICE_PROJECT_POLICY } from './office-project-rules'
 
 export interface OfficeAgentSession {
@@ -9,7 +9,7 @@ export interface OfficeAgentSession {
 }
 
 export function buildOfficeAgentSession(
-  engine: AgentEngine | 'shell',
+  engine: AgentEngine | 'janus' | 'shell',
   workspaceRoot: string,
   binaryPath: string | undefined,
   mcpEntry: string,

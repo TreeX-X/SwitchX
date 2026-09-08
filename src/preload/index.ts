@@ -25,7 +25,7 @@ import {
   JANUS_EVENT_CHANNELS,
   type JanusAPI
 } from '../shared/ipc/janus'
-import { AGENT_CHANNELS, SUBAGENT_RUN_CHANNELS, type AgentAPI, type SubAgentRunAPI } from '../shared/ipc/agent'
+import { AGENT_CHANNELS, SUBAGENT_RUN_CHANNELS, type AgentAPI, type SubAgentRunAPI } from '../shared/ipc/janus-runner'
 import { AGENT_RUNTIME_CHANNELS, type AgentRuntimeAPI } from '../shared/ipc/agent-runtime'
 import { CHECKPOINT_CHANNELS, type CheckpointAPI } from '../shared/ipc/checkpoint'
 import { GIT_CHANNELS, type GitAPI } from '../shared/ipc/git'

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('ClaudeParser', () => {
-  let ClaudeParser: new () => { parseLine(json: Record<string, unknown>): import('../../../src/main/agent/types').AgentEvent[]; reset(): void }
+  let ClaudeParser: new () => { parseLine(json: Record<string, unknown>): import('../../../src/main/janus-runner/types').AgentEvent[]; reset(): void }
 
   beforeEach(async () => {
-    const mod = await import('../../../src/main/agent/parsers/claude-parser')
+    const mod = await import('../../../src/main/janus-runner/parsers/claude-parser')
     ClaudeParser = mod.ClaudeParser
   })
 

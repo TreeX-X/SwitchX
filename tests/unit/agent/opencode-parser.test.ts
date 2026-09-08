@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('OpenCodeParser', () => {
-  let OpenCodeParser: new () => { parseLine(json: Record<string, unknown>): import('../../../src/main/agent/types').AgentEvent[]; reset(): void }
+  let OpenCodeParser: new () => { parseLine(json: Record<string, unknown>): import('../../../src/main/janus-runner/types').AgentEvent[]; reset(): void }
 
   beforeEach(async () => {
-    const mod = await import('../../../src/main/agent/parsers/opencode-parser')
+    const mod = await import('../../../src/main/janus-runner/parsers/opencode-parser')
     OpenCodeParser = mod.OpenCodeParser
   })
 

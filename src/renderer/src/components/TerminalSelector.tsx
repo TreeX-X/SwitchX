@@ -13,12 +13,14 @@ import terminalIcon from '@/assets/icons/terminal.svg'
 import claudeIcon from '@/assets/icons/claude.svg'
 import codexIcon from '@/assets/icons/codex.svg'
 import opencodeIcon from '@/assets/icons/opencode.svg'
+import janusIcon from '@/assets/icons/janus.svg'
 
 const ICONS: Record<TerminalPreset, string> = {
   shell: terminalIcon,
   claude: claudeIcon,
   codex: codexIcon,
   opencode: opencodeIcon,
+  janus: janusIcon,
 }
 
 interface TerminalOptionProps {
@@ -125,7 +127,7 @@ export function TerminalSelector() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 148px), 1fr))',
         }}
       >
-        {(['shell', 'claude', 'codex', 'opencode'] as TerminalPreset[]).map((preset) => (
+        {(['shell', 'claude', 'codex', 'opencode', 'janus'] as TerminalPreset[]).map((preset) => (
           <TerminalOption
             key={preset}
             preset={preset}

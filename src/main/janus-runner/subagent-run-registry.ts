@@ -6,7 +6,7 @@ import type {
   SubAgentRunUpdateInput,
   SubAgentRunUpdatedEvent,
 } from '../../shared/subAgentRun'
-import { SUBAGENT_RUN_CHANNELS } from '../../shared/ipc/agent'
+import { SUBAGENT_RUN_CHANNELS } from '../../shared/ipc/janus-runner'
 
 function nowIso(): string {
   return new Date().toISOString()

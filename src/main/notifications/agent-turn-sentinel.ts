@@ -1,7 +1,7 @@
 import { watch, type FSWatcher } from 'fs'
 import { open, stat } from 'fs/promises'
 import { basename, dirname } from 'path'
-import type { AgentEngine } from '../agent/types'
+import type { AgentEngine } from '../janus-runner/types'
 
 /**
  * Secondary deterministic turn-end source for CLIs whose end-of-turn hooks do

@@ -48,7 +48,7 @@ export interface LayoutConfig {
   positions: LayoutPosition[]
 }
 
-export type TerminalPreset = 'shell' | 'claude' | 'codex' | 'opencode'
+export type TerminalPreset = 'shell' | 'claude' | 'codex' | 'opencode' | 'janus'
 
 export interface WorkspaceSidebarGroup {
   id: string
