@@ -19,7 +19,7 @@ import {
   type LaunchConfig,
   type ProjectType,
 } from '../../shared/ipc/project'
-import { authorizeRendererAction, type RendererActionAuthorizer } from '../agent/runtime/renderer-authorization'
+import { authorizeRendererAction, type RendererActionAuthorizer } from '../agent/runtime/shell-runtime'
 
 /**
  * 注册项目管理相关的 IPC 处理器

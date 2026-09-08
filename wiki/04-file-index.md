@@ -1,6 +1,6 @@
 ﻿# File Index
 
-Last analyzed: 2026-08-17
+Last analyzed: 2026-09-06
 
 Use this as a lookup table before opening source.
 
@@ -48,6 +48,8 @@ Use this as a lookup table before opening source.
 | `src/main/ipc/browser-handlers.ts` | browser surface lifecycle IPC |
 | `src/main/ipc/language-handlers.ts` | language get/set IPC (i18n) |
 | `src/main/ipc/language-service-handlers.ts` | clangd go-to-definition IPC |
+| `src/main/ipc/language-service-installer-handlers.ts` | managed language-service binary install/remove/status IPC (window-authorized) |
+| `src/main/ipc/roundtable-handlers.ts` | roundtable start/advance/end/state/restore/export IPC + event fan-out |
 | `src/main/ipc/subagent-run-handlers.ts` | Subagent run lifecycle and event IPC |
 | `src/main/ipc/runtime-telemetry-handlers.ts` | runtime telemetry IPC |
 | `src/main/ipc/settings-handlers.ts` | notification settings + Feishu control status IPC |
@@ -64,6 +66,8 @@ Use this as a lookup table before opening source.
 | `src/main/browser/surface-manager.ts` | `BrowserSurfaceManager` - browser pane/window lifecycle, URL normalization |
 | `src/main/language-service/clangd-client.ts` | `ClangdClient` LSP client, `LspMessageBuffer`, definition normalization |
 | `src/main/language-service/clangd-manager.ts` | `ClangdManager` singleton, `isPathWithinWorkspace` |
+| `src/main/language-service/registry.ts` | language-service descriptors (`getDescriptor`/`getAllDescriptors`) for installer |
+| `src/main/office/officecli-manager.ts` | OfficeCLI probe: pinned `SUPPORTED_VERSION` 1.0.135, capability check, manual guidance |
 | `src/main/git/service.ts` | git operations: status/log/stage/unstage/commit/push/pull/diff/fileBaseline |
 | `src/main/project/detector/detector.ts` | project type detection from feature files and manifests |
 | `src/main/project/config/project-config.ts` | launch config create/validate |
@@ -87,28 +91,46 @@ Use this as a lookup table before opening source.
 | `src/main/agent/parsers/codex-parser.ts` | parse Codex CLI JSON events |
 | `src/main/agent/parsers/opencode-parser.ts` | parse OpenCode CLI JSON events |
 | `src/main/agent/parsers/index.ts` | parser registry |
-| `src/main/agent/environment/janus-workspace-fs.ts` | `JanusWorkspaceFs` - workspace filesystem, evidence context |
-| `src/main/agent/loop/janus-agent-loop.ts` | `JanusAgentLoopConfig` - structured agent loop with before/after tool hooks |
-| `src/main/agent/loop/vercel-stream-adapter.ts` | Vercel AI SDK stream/message adaptation, `createVercelStream` |
-| `src/main/agent/loop/runtime-tool-adapter.ts` | bridge `ToolRegistry` tools to `JanusAgentTool` with resource scoping |
-| `src/main/agent/loop/index.ts` | public re-exports |
-| `src/main/agent/runtime/runtime.ts` | `WorkspaceAgentRuntime` - session lifecycle, tool execution, events |
-| `src/main/agent/runtime/registry.ts` | `ToolRegistry` - tool registration, input validation |
-| `src/main/agent/runtime/path-guard.ts` | workspace path validation, trusted targets, read authorization |
-| `src/main/agent/runtime/policy-gate.ts` | sensitive-path detection, secret redaction, policy evaluation, approval decisions |
-| `src/main/agent/runtime/policy-audit-store.ts` | `FilePolicyAuditStore` - persistent audit trail |
-| `src/main/agent/runtime/file-transaction.ts` | workspace edit preparation, conflict detection, sha256 |
-| `src/main/agent/runtime/renderer-authorization.ts` | authorize renderer-initiated actions |
-| `src/main/agent/runtime/tool-result.ts` | convert tool results to model-compatible values |
-| `src/main/agent/runtime/tools/workspace-tools.ts` | read, edit, create, list, search |
+| `src/main/agent/runtime/shell-runtime.ts` | shell assembly: `workspaceAgentRuntime` singleton (file audit) + `authorizeRendererAction` |
+| `@janus-agent/agent-core:main/agent/environment/janus-workspace-fs.ts` | `JanusWorkspaceFs` - workspace filesystem, evidence context (moved from `src/main/agent/`) |
+| `@janus-agent/agent-core:main/agent/loop/janus-agent-loop.ts` | `JanusAgentLoopConfig` - structured agent loop with before/after tool hooks (moved) |
+| `@janus-agent/agent-core:main/agent/loop/vercel-stream-adapter.ts` | Vercel AI SDK stream/message adaptation, `createVercelStream` (moved; `streamTextFn` now required) |
+| `@janus-agent/agent-core:main/agent/loop/runtime-tool-adapter.ts` | bridge `ToolRegistry` tools to `JanusAgentTool` with resource scoping (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/runtime.ts` | `WorkspaceAgentRuntime` - session lifecycle, tool execution, events (moved; shell singleton lives in `shell-runtime.ts`) |
+| `@janus-agent/agent-core:main/agent/runtime/registry.ts` | `ToolRegistry` - tool registration, input validation (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/path-guard.ts` | workspace path validation, trusted targets, read authorization (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/policy-gate.ts` | sensitive-path detection, secret redaction, policy evaluation, approval decisions (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/policy-audit-store.ts` | `FilePolicyAuditStore` - persistent audit trail (moved; default dir replicates shell layout) |
+| `@janus-agent/agent-core:main/agent/runtime/file-transaction.ts` | workspace edit preparation, conflict detection, sha256 (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/renderer-authorization.ts` | authorize renderer-initiated actions (moved; factory form, shell default in `shell-runtime.ts`) |
+| `@janus-agent/agent-core:main/agent/runtime/tool-result.ts` | convert tool results to model-compatible values (moved) |
+| `@janus-agent/agent-core:main/agent/runtime/tools/workspace-tools.ts` | read, edit, create, list, search (moved) |
 | `src/main/agent/runtime/tools/git-tools.ts` | status, log, diff, stage, unstage, commit, pull, push |
 | `src/main/agent/runtime/tools/project-tools.ts` | detect, generateConfig, applyConfig, listProcesses, startProcess, processOutput, stopProcess |
 | `src/main/agent/runtime/tools/command-tools.ts` | command execution |
-| `src/main/agent/checkpoint/checkpoint-manager.ts` | checkpoint lifecycle, snapshot, restore |
-| `src/main/agent/checkpoint/blob-store.ts` | content-addressed blob storage |
-| `src/main/agent/checkpoint/diff-engine.ts` | unified diff and merge conflict helpers |
-| `src/main/agent/checkpoint/git-adapter.ts` | git helpers for checkpoints |
-| `src/main/agent/checkpoint/types.ts` | checkpoint types |
+| `@janus-agent/agent-core:main/agent/checkpoint/checkpoint-manager.ts` | checkpoint lifecycle, snapshot, restore (moved) |
+| `@janus-agent/agent-core:main/agent/checkpoint/blob-store.ts` | content-addressed blob storage (moved) |
+| `@janus-agent/agent-core:main/agent/checkpoint/diff-engine.ts` | unified diff and merge conflict helpers (moved) |
+| `@janus-agent/agent-core:main/agent/checkpoint/git-adapter.ts` | git helpers for checkpoints (moved) |
+| `@janus-agent/agent-core:main/agent/checkpoint/types.ts` | checkpoint types (moved) |
+
+## Roundtable
+
+| File / Directory | Function |
+|---|---|
+| `src/main/roundtable/service.ts` | `RoundtableService` - session lifecycle, `resolveRegisteredWorkspace`, fail-loud agents |
+| `src/main/roundtable/runtime.ts` | staged deliberation runtime |
+| `src/main/roundtable/store.ts` | session persistence + restore |
+| `src/main/roundtable/agent-registry.ts` | participant registry from workflow template |
+| `src/main/roundtable/workspace-tools.ts` | read-only `workspace.list/read/readRange` for agents |
+| `src/shared/roundtable/events.ts`, `state.ts` | event envelopes, state model, migration, `markInterrupted` |
+| `src/shared/roundtable/export.ts`, `parchment.ts` | parchment markdown export |
+| `src/shared/roundtable/workflow-template.ts`, `host-synthesis.ts` | default workflow participants, host synthesis |
+| `src/shared/ipc/roundtable.ts` | `roundtable:*` channels + `RoundtableAPI` contract |
+| `src/renderer/src/components/janus/JanusRoundtablePane.tsx` | deliberation composer/controls |
+| `src/renderer/src/components/janus/RoundtableStage.tsx` | stage camera/hover/empty-advance |
+| `src/renderer/src/components/janus/JanusRoundtableParchment.tsx`, `roundtableExport.ts` | readable parchment view + export helper |
+| `src/renderer/src/components/janus/janusReasoning.ts`, `ThinkingRegion.tsx` | UI-only bounded reasoning buffer (4000 chars) + display |
 
 ## Companion and Remote Notifications
 
@@ -146,7 +168,7 @@ Use this as a lookup table before opening source.
 | `src/main/llm/ModelCatalogService.ts` | `ModelCatalogService` - model registry access, OpenRouter normalization |
 | `src/main/llm/chat-orchestrator.ts` | chat message/stream management, tool trace, workspace mutation intent, abort |
 | `src/main/llm/ai-runtime.ts` | Vercel AI SDK model resolution |
-| `src/main/llm/workspace-chat-tools.ts` | `createWorkspaceChatTools`, `createToolPreview` |
+| `@janus-agent/agent-core:main/agent/chat-tools/workspace-chat-tools.ts` | `createWorkspaceChatTools`, `createToolPreview` (moved from `src/main/llm/`) |
 | `src/main/llm/development-config-sync.ts` | `synchronizeInstalledLlmConfig`, `getDevelopmentLlmSyncStatus` |
 
 ## Janus and Blueprint
@@ -156,7 +178,7 @@ Use this as a lookup table before opening source.
 | `src/shared/janus/persona.ts` | Janus system persona |
 | `src/shared/janus/types.ts` | canonical Blueprint/Janus models |
 | `src/shared/janus/relations.ts` | relation types, cycle detection, invariant assertions, sanitize |
-| `src/shared/janus/maintenance-types.ts` | maintenance operations, change-sets, audit, tasks |
+| `src/shared/janus/maintenance-types.ts` | maintenance operations, change-sets, audit, tasks, intent groups, digests, agent events, dismiss/steer DTOs |
 | `src/main/janus/types.ts` | compatibility re-export for shared Blueprint/Janus models |
 | `src/main/janus/blueprint-store.ts` | Blueprint persistence, migration, CRUD, node updates, candidates |
 | `src/main/janus/blueprint-factory.ts` | `makeNode`, `makeFeatureItem`, `nowIso` |
@@ -167,7 +189,7 @@ Use this as a lookup table before opening source.
 | `src/main/janus/requirement-candidates.ts` | `candidateKey`, `resolveSuggestedParentId` |
 | `src/main/janus/chat-store.ts` | `JanusChatStore` - conversation persistence singleton |
 | `src/main/janus/maintenance/service.ts` | `BlueprintMaintenanceService` - LLM-driven maintenance singleton |
-| `src/main/janus/maintenance/changeset.ts` | change-set operations, reverse operations, `scopeNodeIds`, `applyOperations`, `buildReverseOperations` |
+| `src/main/janus/maintenance/changeset.ts` | change-set operations, reverse operations, `scopeNodeIds`, `applyOperations`, `buildReverseOperations`, `groupMaintenanceOperations`, `resolveOperationRisk`, `buildGroupDigest`, `expandGroupSelection` |
 | `src/main/janus/maintenance/blueprint-tools.ts` | `createJanusBlueprintTools`, `blueprintReadModelTool`, `blueprintNodeContext` |
 
 ## Knowledge
@@ -189,7 +211,14 @@ Use this as a lookup table before opening source.
 | `src/main/knowledge/recall-service.ts` | recall service |
 | `src/main/knowledge/review-service.ts` | review service |
 | `src/main/knowledge/truth-service.ts` | truth service |
-| `src/main/knowledge/extract-service.ts` | extraction service |
+| `src/main/knowledge/extract-service.ts` | extraction service (queue-driven; no direct `knowledge:extract` IPC) |
+| `src/main/knowledge/processing-queue.ts` | queue-owned pipeline: cursors, failure ledger, `SerialQueue`, `processNow` |
+| `src/main/knowledge/llm-stage.ts` | LLM sedimentation stage (batch 50, mode-gated) |
+| `src/main/knowledge/deterministic-extractor.ts` | deterministic observation → candidate extraction |
+| `src/main/knowledge/diagnostics-service.ts` | pipeline diagnostics counters |
+| `src/main/knowledge/workspace-identity.ts` | per-workspace knowledge index identity |
+| `src/main/knowledge/search/embedding-provider.ts` | embedding provider beside BM25 |
+| `src/main/knowledge/external-mcp.ts` | Cursor/VS Code/Claude Code MCP registration (`janusx-knowledge` key merge + backup) |
 | `src/main/knowledge/retention-classifier.ts` | observation retention scoring |
 | `src/main/knowledge/operations-service.ts` | bulk operations |
 | `src/main/knowledge/audit-service.ts` | audit service |
@@ -214,6 +243,8 @@ Use this as a lookup table before opening source.
 | `src/shared/ipc/janus-chat.ts` | typed Janus Chat channels, message/conversation DTOs, and preload API |
 | `src/shared/ipc/language-service.ts` | typed Language Service channels, definition request/result, and preload API |
 | `src/shared/ipc/agent.ts` | Agent + SubAgentRun channels, DTOs, and preload APIs |
+| `src/shared/ipc/roundtable.ts` | Roundtable channels, state/event DTOs, and preload API |
+| `src/shared/roundtable/*` | roundtable events/state/export/parchment/workflow-template/host-synthesis models |
 | `src/shared/ipc/checkpoint.ts`, `git.ts`, `llm.ts`, `settings.ts`, `system.ts` | remaining fixed domain contracts, clone-safe DTOs, events, and preload APIs |
 | `src/shared/janus/types.ts`, `src/shared/ipc/janus.ts` | shared Blueprint/Janus models plus typed command/event API |
 | `src/preload/index.ts` | fixed typed adapters for all public renderer domains; no generic bridge |
@@ -264,11 +295,13 @@ Use this as a lookup table before opening source.
 | Area | Files |
 |---|---|
 | Root workspace/config | `tests/unit/workspace.test.ts`, `application-profile.test.ts` |
+| Roundtable | `tests/unit/roundtable-*.test.ts` (workspace restore consistency, export, fail-loud agents) |
 | Workspace IPC contract | `tests/unit/workspace-ipc-contract.test.ts` |
 | Terminal | `tests/unit/terminal-*.test.ts` (10+ specs) |
 | Package boundary | `tests/unit/package-boundary.test.ts` |
 | Project config/IPC/service | `tests/unit/project-*.test.ts` |
 | Knowledge IPC and workbench | `tests/unit/knowledge-ipc-contract.test.ts`, `tests/unit/knowledge/*.test.ts` |
+| Knowledge pipeline desktop | `tests/e2e/knowledge-pipeline.spec.ts` |
 | Blueprint/Janus IPC, maintenance, canvas | `tests/unit/blueprint-*.test.ts` (10+ specs) |
 | Agent runtime, tools, policy, loop | `tests/unit/agent/*.test.ts` (15+ specs) |
 | Companion gateway | `tests/unit/companion-*.test.ts` (5 specs) |

@@ -5,7 +5,7 @@ import { EMPTY_ROUNDTABLE_STATE, reduceRoundtableEvent } from '../../shared/roun
 import { synthesizeHostDraft, harvestQuestionTexts, harvestAnsweredTexts } from '../../shared/roundtable/host-synthesis'
 import { defaultRoundtableWorkflow, participantsForRole, validateWorkflowTemplate, type ParticipantInstance, type WorkflowStage, type WorkflowTemplate } from '../../shared/roundtable/workflow-template'
 import { AgentRegistry } from './agent-registry'
-import { janusWorkspaceFs } from '../agent/environment/janus-workspace-fs'
+import { janusWorkspaceFs } from '@janus-agent/agent-core'
 import { executeRoundtableWorkspaceTool } from './workspace-tools'
 
 type GraphState = {

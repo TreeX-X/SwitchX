@@ -1,5 +1,18 @@
 ﻿# Wiki Log
 
+## 2026-09-08
+
+- Agent engine separation (P3′): deleted 28 local implementations (`agent/loop/*`, `agent/stream/*`, `agent/runtime/*` except `shell-runtime.ts` + shell `command/git/project-tools`, `agent/checkpoint/*`, `agent/environment/*`, `llm/{workspace-chat-tools,chat-session-runtime,system-prompt-builder,chat-agent-events}.ts`) — single source is now `@janus-agent/agent-core/chat-core` (+ `node-hosts` for CLI command/git/jobs). Shell keeps `shell-runtime.ts` assembly, maintenance/blueprint/knowledge/roundtable code, and 18 moved unit tests now run in-package; indexes 02/04 repointed.
+- Found and fixed two real divergences during the move: package `CheckpointEngine` was narrower than the shell union (aligned to `'claude'|'codex'|'opencode'|'shell'|'manual'|'janus'|'pi'`), and package `createVercelStream` requires an explicit `streamTextFn` (maintenance now passes shell `streamText`).
+
+## 2026-09-06
+
+- Bumped wiki baseline from v0.8.0 (2026-08-17) to v0.8.2: `package.json` 0.8.2, preload 24 typed domains, 205 unit specs, 7 E2E specs.
+- Promoted Roundtable from unlisted to first-class subsystem: `src/main/roundtable/` (service/runtime/store/agent-registry/workspace-tools), `src/shared/roundtable/` (events/state/export/parchment/workflow-template/host-synthesis), `roundtable:*` IPC + `registerRoundtableHandlers`, renderer `JanusRoundtablePane` / `RoundtableStage` / `JanusRoundtableParchment` / `roundtableExport` — added to README, 01, 02, 03 (deliberation flow), 04.
+- Promoted Knowledge Phase 3-5 from log-only to main pages: queue-owned pipeline (`processing-queue.ts` cursors/failure ledger, `llm-stage.ts` batch 50, `deterministic-extractor.ts`, `diagnostics-service.ts`, `workspace-identity.ts`, `embedding-provider.ts`), `knowledge:extract` removal note, external MCP (`external-mcp.ts`, `knowledge:external-mcp:*`), `sortInboxCandidates` ordering, `knowledge-pipeline` E2E.
+- Documented Language Service installer (`registry.ts` + `language-service-installer-handlers.ts`, window-authorized) and OfficeCLI pin (`officecli-manager.ts` 1.0.135); documented Janus reasoning region (`janusReasoning.ts` 4000-char UI-only buffer + `ThinkingRegion.tsx`, token cleanup, context-budget handoff).
+- Fixed stale counts: `20+` → `24` IPC domains, `120+` → `205` unit specs, `5+` → `7` E2E specs; added maintenance triggers + `rg` checks for roundtable/knowledge-queue/installer drift.
+
 ## 2026-09-05
 
 - P0 recall quality: wiki title-term overlap (`titleTerm`) and slug (`slugMatch`) score parts in `lexicalExplanation`; long wiki pages served as query-centered excerpts (`excerptAroundQuery`, 1500 chars) in `context-service` so one page can't eat the shared budget; wiki docs inherit file/observation provenance + workspace path from linked facts (also fixes path-scoped wiki discovery); `fact_get` gains reverse `referencingPages`.

@@ -1,7 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { terminalManager } from '../terminal/manager'
-import { checkpointManager } from '../agent/checkpoint/checkpoint-manager'
-import type { CheckpointEngine } from '../agent/checkpoint/types'
+import { checkpointManager } from '@janus-agent/agent-core'
+import type { CheckpointEngine } from '@janus-agent/agent-core'
 import { analyzer } from '../janus/analyzer'
 import { isTerminalPreset, resolveTerminalLaunchProgram } from '../../shared/terminalLaunch'
 import { resolveCLIPath } from '../agent/cli-resolver'
@@ -248,7 +248,7 @@ function processCheckpointQueue(id: string): void {
   })
 }
 
-const AGENT_CLI_COMMANDS = ['claude', 'codex', 'opencode'] as const
+const AGENT_CLI_COMMANDS = ['claude', 'codex', 'opencode', 'janus', 'pi'] as const
 type WarmupEngine = (typeof AGENT_CLI_COMMANDS)[number]
 
 function isWarmupEngine(value: string): value is WarmupEngine {
@@ -426,7 +426,7 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
   /** Per-session gate so second+ Claude/Codex/OpenCode creates skip hook file IO. */
   const hooksInstalledThisSession = new Set<Exclude<CheckpointEngine, 'shell' | 'manual'>>()
 
-  async function ensureHooksInstalled(engine: Exclude<CheckpointEngine, 'shell' | 'manual'>): Promise<void> {
+  async function ensureHooksInstalled(engine: Exclude<CheckpointEngine, 'shell' | 'manual' | 'janus' | 'pi'>): Promise<void> {
     if (hooksInstalledThisSession.has(engine) && await hookConfigManager.isInstalled(engine)) return
     await hookConfigManager.ensureInstalled(engine)
     hooksInstalledThisSession.add(engine)
@@ -503,6 +503,8 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
       officecliManager.resolveBinary().catch(() => undefined),
       ...requested.map((engine) => resolveCLIPath(engine).catch(() => null)),
       ...requested.map(async (engine) => {
+        // janus / pi emit no hook events: skip hook file IO (no-op short-circuit).
+        if (engine === 'janus' || engine === 'pi') return
         try {
           await ensureHooksInstalled(engine)
         } catch {
@@ -604,7 +606,8 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
     })()
 
     const hookEnvPromise = (async (): Promise<Record<string, string> | undefined> => {
-      if (engine === 'shell') return undefined
+      // shell spawns no agent; janus / pi emit no hook events: none needs hook env.
+      if (engine === 'shell' || engine === 'janus' || engine === 'pi') return undefined
       try {
         await hookBridge.start()
         await ensureHooksInstalled(engine)
@@ -708,7 +711,9 @@ export function registerTerminalHandlers(getMainWindow: () => BrowserWindow | nu
     }
 
     try {
-    if (engine !== 'shell') {
+    // Hook/turn/runner registries are for the claude/codex/opencode family:
+    // janus / pi emit no hook events and never enter the subprocess runner.
+    if (engine !== 'shell' && engine !== 'janus' && engine !== 'pi') {
       hookCoordinator.registerTerminal({
         terminalId: id,
         engine,

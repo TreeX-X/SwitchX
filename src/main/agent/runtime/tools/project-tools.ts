@@ -3,9 +3,9 @@ import { basename, isAbsolute, join, relative, resolve, sep } from 'path'
 import { ProjectConfig, ProjectDetector, ProjectType, detectByFeatures, getProjectSchema } from '../../../project'
 import type { LaunchConfig } from '../../../../shared/ipc/project'
 import { getProjectRunner } from '../../../project/runner/service'
-import { resolveWorkspaceTarget } from '../path-guard'
-import { isSensitivePath } from '../policy-gate'
-import type { RegisteredTool, ToolRegistry } from '../registry'
+import { resolveWorkspaceTarget } from '@janus-agent/agent-core'
+import { isSensitivePath } from '@janus-agent/agent-core'
+import type { RegisteredTool, ToolRegistry } from '@janus-agent/agent-core'
 
 const DEFAULT_DEPTH = 2
 const MAX_DEPTH = 3

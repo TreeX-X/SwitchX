@@ -1,8 +1,8 @@
 import type { BrowserWindow, IpcMain } from 'electron'
 import { AGENT_RUNTIME_CHANNELS, type ApprovalResult, type CreateAgentSessionInput, type ExecuteToolInput, type AgentApprovalMode } from '../../shared/ipc/agent-runtime'
 import { configService } from '../config/service'
-import { workspaceAgentRuntime } from '../agent/runtime/runtime'
-import { registerWorkspaceTools } from '../agent/runtime/tools/workspace-tools'
+import { workspaceAgentRuntime } from '../agent/runtime/shell-runtime'
+import { registerWorkspaceTools } from '@janus-agent/agent-core'
 import { registerProjectTools } from '../agent/runtime/tools/project-tools'
 import { registerGitTools } from '../agent/runtime/tools/git-tools'
 import { registerCommandTools } from '../agent/runtime/tools/command-tools'
@@ -13,7 +13,9 @@ let getMainWindow: () => BrowserWindow | null = () => null
 
 export function registerAgentRuntimeHandlers(windowGetter: () => BrowserWindow | null, ipcMain: IpcMain, resolveWorkspaceRoot?: ResolveWorkspaceRoot): void {
   getMainWindow = windowGetter
-  if (resolveWorkspaceRoot) workspaceAgentRuntime.setWorkspaceResolver(resolveWorkspaceRoot)
+  // Office guard resolves `undefined` for unknown workspaces; the core port
+  // uses `null` for the same case (fail-closed on both sides).
+  if (resolveWorkspaceRoot) workspaceAgentRuntime.setWorkspaceResolver((id) => resolveWorkspaceRoot(id).then((root) => root ?? null))
   if (registered) return
   registerWorkspaceTools(workspaceAgentRuntime.registry)
   registerProjectTools(workspaceAgentRuntime.registry)

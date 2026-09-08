@@ -35,7 +35,7 @@ vi.mock('../../../src/main/llm/ai-runtime', () => ({
   generateText: vi.fn(),
   streamText,
 }))
-vi.mock('../../../src/main/agent/runtime/runtime', () => ({
+vi.mock('../../../src/main/agent/runtime/shell-runtime', () => ({
   workspaceAgentRuntime: {
     getSession,
     executeFunctionCall,

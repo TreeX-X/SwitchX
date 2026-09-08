@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { afterEach, describe, expect, it } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
+import { WorkspaceAgentRuntime } from '@janus-agent/agent-core'
 import { registerGitTools } from '../../../src/main/agent/runtime/tools/git-tools'
 
 const execFileAsync = promisify(execFile)

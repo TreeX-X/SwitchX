@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { WorkspaceAgentRuntime } from '../../../src/main/agent/runtime/runtime'
+import { WorkspaceAgentRuntime } from '@janus-agent/agent-core'
 import { commandExecutionMode, registerCommandTools } from '../../../src/main/agent/runtime/tools/command-tools'
 
 const temporaryDirectories: string[] = []

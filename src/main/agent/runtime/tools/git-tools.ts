@@ -9,9 +9,9 @@ import {
   stage,
   unstage,
 } from '../../../git/service'
-import { isSensitivePath } from '../policy-gate'
-import { resolveWorkspaceTarget } from '../path-guard'
-import type { RegisteredTool, ToolRegistry } from '../registry'
+import { isSensitivePath } from '@janus-agent/agent-core'
+import { resolveWorkspaceTarget } from '@janus-agent/agent-core'
+import type { RegisteredTool, ToolRegistry } from '@janus-agent/agent-core'
 
 const registeredRegistries = new WeakSet<ToolRegistry>()
 const MAX_GIT_PATHS = 100

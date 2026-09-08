@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { access } from 'fs/promises'
-import { checkpointManager } from '../agent/checkpoint/checkpoint-manager'
-import type { CheckpointEngine } from '../agent/checkpoint/types'
+import { checkpointManager } from '@janus-agent/agent-core'
+import type { CheckpointEngine } from '@janus-agent/agent-core'
 import { captureForCwd, logKnowledgeCaptureFailure } from '../knowledge/workspace-identity'
 import { CHECKPOINT_CHANNELS } from '../../shared/ipc/checkpoint'
 

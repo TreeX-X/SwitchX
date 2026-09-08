@@ -4,8 +4,8 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { requiresCommandShell } from '../../../project/runner/runner'
 import { getProjectRunner } from '../../../project/runner/service'
-import { resolveWorkspaceTarget } from '../path-guard'
-import type { RegisteredTool, ToolRegistry } from '../registry'
+import { resolveWorkspaceTarget } from '@janus-agent/agent-core'
+import type { RegisteredTool, ToolRegistry } from '@janus-agent/agent-core'
 
 const registeredRegistries = new WeakSet<ToolRegistry>()
 const DEFAULT_TIMEOUT_MS = 120_000
