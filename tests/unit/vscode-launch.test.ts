@@ -2,13 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { buildVSCodeLaunchArgs } from '../../src/main/ide-launch'
 
 describe('VS Code launcher', () => {
-  it('builds a new-window launch with an isolated profile', () => {
+  it('builds a new-window launch with the default user profile', () => {
     expect(buildVSCodeLaunchArgs(
       'C:\\Users\\Tree\\Desktop\\git\\JanusX',
-      'C:\\Users\\Tree\\AppData\\Roaming\\JanusX-Dev\\vscode-workspace-profile-1234',
     )).toEqual([
       '--new-window',
-      '--user-data-dir=C:\\Users\\Tree\\AppData\\Roaming\\JanusX-Dev\\vscode-workspace-profile-1234',
       'C:\\Users\\Tree\\Desktop\\git\\JanusX',
     ])
   })

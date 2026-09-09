@@ -22,7 +22,7 @@ export function StatusBar() {
 
   return (
     <footer
-      className="col-span-3 flex items-center justify-between px-3.5 text-[10px]"
+      className="col-span-3 flex items-center px-3.5 text-[10px]"
       style={{
         background: 'var(--shell-chrome)',
         borderTop: '1px solid var(--shell-border)',
@@ -39,7 +39,6 @@ export function StatusBar() {
         />
         <span>{blueprintMode ? t('common:statusBar.blueprintRunning') : (statusText[loadState] ?? t('common:statusBar.ready'))}</span>
       </div>
-      <span>v0.8.0</span>
     </footer>
   )
 }

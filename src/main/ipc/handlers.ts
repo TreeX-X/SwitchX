@@ -473,9 +473,8 @@ export function registerWorkspaceHandlers(
       const codePath = await resolveCLIPath('code')
       if (!codePath) return fileTreeResult(false, 'VS Code command was not found')
 
-      const profilePath = join(app.getPath('userData'), `vscode-workspace-profile-${process.pid}`)
       await new Promise<void>((complete, fail) => {
-        const child = spawn(codePath, buildVSCodeLaunchArgs(workspacePath, profilePath), {
+        const child = spawn(codePath, buildVSCodeLaunchArgs(workspacePath), {
           detached: true,
           stdio: 'ignore',
         })
